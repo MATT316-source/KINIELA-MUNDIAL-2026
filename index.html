@@ -230,10 +230,6 @@
             text-align: center;
         }
 
-        /* ============================================= */
-        /* GESTIÓN DE PARTICIPANTES - VERSIÓN COMPACTA   */
-        /* ELIMINADOS ESPACIOS EXCESIVOS ENTRE ELEMENTOS */
-        /* ============================================= */
         .participant-item {
             background: #f9f9ef;
             border-radius: 40px;
@@ -262,7 +258,6 @@
         .status-complete { background: #c8e6d9; color: #1e6e3e; }
         .status-pending { background: #fff0cc; color: #c97e00; }
         
-        /* Botones más pegados y compactos */
         .participant-item button {
             padding: 3px 8px;
             font-size: 0.65rem;
@@ -276,7 +271,6 @@
         .delPartBtn { background: #db3a4a; color: white; }
         .participant-item button:hover { opacity: 0.85; transform: scale(0.97);}
         
-        /* Eliminar espacio extra en el contenedor de lista */
         #participantsList {
             max-height: 260px;
             overflow-y: auto;
@@ -284,7 +278,6 @@
             flex-direction: column;
             gap: 5px;
         }
-        /* Input de nuevo participante más compacto */
         #newPlayerName {
             font-size: 0.7rem;
             padding: 7px 12px;
@@ -388,7 +381,7 @@
             <div class="card">
                 <div class="card-header"><h2>🏅 TABLA GENERAL DE POSICIONES</h2><span class="badge-72">CLASIFICACIÓN</span></div>
                 <table class="general-ranking" id="generalRankingTable">
-                    <thead><tr><th>#</th><th>PARTICIPANTE</th><th>PUNTOS</th></tr></thead>
+                    <thead><tr><th>POS</th><th>PARTICIPANTE</th><th>PUNTOS</th></tr></thead>
                     <tbody id="generalRankingBody"></tbody>
                 </table>
             </div>
@@ -500,7 +493,9 @@
         renderParticipants();
     }
     
-    // FUNCIÓN MODIFICADA: Ranking con empates compartiendo posición
+    // ============================================================
+    // FUNCIÓN CORREGIDA - RANKING CON POSICIONES DENSAS (1,1,1,2,2,3,4,5...)
+    // ============================================================
     function renderGeneralRanking() {
         // Ordenar por puntos de mayor a menor
         const sorted = [...participantes].sort((a, b) => b.puntos - a.puntos);
@@ -514,10 +509,12 @@
         
         let position = 1;
         let i = 0;
+        
         while (i < sorted.length) {
             let currentPoints = sorted[i].puntos;
             let countSamePoints = 1;
-            // Contar cuántos tienen los mismos puntos
+            
+            // Contar cuántos participantes tienen la misma cantidad de puntos
             while (i + countSamePoints < sorted.length && sorted[i + countSamePoints].puntos === currentPoints) {
                 countSamePoints++;
             }
@@ -530,20 +527,20 @@
                 else if (position === 2) rankClass = 'rank-2';
                 else if (position === 3) rankClass = 'rank-3';
                 
-                let positionBadge = '';
-                if (position === 1) positionBadge = '🥇 ';
-                else if (position === 2) positionBadge = '🥈 ';
-                else if (position === 3) positionBadge = '🥉 ';
-                else positionBadge = '';
+                let medalEmoji = '';
+                if (position === 1) medalEmoji = '🥇 ';
+                else if (position === 2) medalEmoji = '🥈 ';
+                else if (position === 3) medalEmoji = '🥉 ';
                 
                 tbody.innerHTML += `<tr class="${rankClass}">
-                    <td style="text-align:center; font-weight:bold;">${position}</td>
-                    <td><strong>${positionBadge}${p.nombre.toUpperCase()}</strong></td>
+                    <td style="text-align:center; font-weight:bold;">${position} ${medalEmoji}</td>
+                    <td><strong>${p.nombre.toUpperCase()}</strong></td>
                     <td class="puntos-destacados">${p.puntos}</td>
                 </tr>`;
             }
             
             // Avanzar al siguiente grupo de puntos
+            // La siguiente posición será la posición actual + la cantidad de personas que empataron
             i += countSamePoints;
             position += countSamePoints;
         }
@@ -601,12 +598,15 @@
         partidos.forEach((p,idx)=>{
             const realL = p.real.local!==null ? p.real.local : '';
             const realV = p.real.visitante!==null ? p.real.visitante : '';
-            tbody.innerHTML += `<tr><td style="text-align:center;">${p.no}</td><td style="text-align:center;"><span class="grupo-badge">${p.grupo}</span></td>
+            tbody.innerHTML += `<tr>
+                <td style="text-align:center;">${p.no}</td>
+                <td style="text-align:center;"><span class="grupo-badge">${p.grupo}</span></td>
                 <td>${getTeamWithFlag(p.local)}</td>
                 <td>${getTeamWithFlag(p.visitante)}</td>
                 <td>${formatFecha(p.fechaHora)}</td>
                 <td><div class="score-input"><input type="number" class="realL-${idx}" value="${realL}" style="width:36px;"> : <input type="number" class="realV-${idx}" value="${realV}" style="width:36px;"></div></td>
-                <td>${(p.real.local!==null && p.real.visitante!==null)?'✅':'⚽'}</td></tr>`;
+                <td>${(p.real.local!==null && p.real.visitante!==null)?'✅':'⚽'}</td>
+            </tr>`;
         });
     }
     
@@ -725,7 +725,7 @@
         if(confirm("⚠️ ¿Reiniciar todo?")){ localStorage.removeItem('QM2026_FINAL_72'); setDefault(); load(); }
     }
     
-    // IMPRESIÓN EXACTAMENTE 2 PÁGINAS POR PARTICIPANTE (PARTIDOS 1-36 y 37-72)
+    // IMPRESIÓN EXACTAMENTE 2 PÁGINAS POR PARTICIPANTE
     function printCedulas(){
         if(participantes.length === 0){ alert("No hay participantes"); return; }
         let win = window.open('', '_blank');
@@ -760,12 +760,16 @@
                 const m = partidos[i];
                 const pron = p.pronosticos[i] || { local: null, visitante: null };
                 const pronTxt = (pron.local !== null && pron.visitante !== null) ? `${pron.local} : ${pron.visitante}` : "___ : ___";
-                html += `<tr><td style="text-align:center;">${m.no}</td><td style="text-align:center;">${m.grupo}</td>
-                    <td class="team-cell">${getTeamText(m.local)}</td><td class="team-cell">${getTeamText(m.visitante)}</td>
+                html += `<tr>
+                    <td style="text-align:center;">${m.no}</td>
+                    <td style="text-align:center;">${m.grupo}</td>
+                    <td class="team-cell">${getTeamText(m.local)}</td>
+                    <td class="team-cell">${getTeamText(m.visitante)}</td>
                     <td style="font-size:8px;">${formatFechaShort(m.fechaHora)}</td>
                     <td class="pronostico-cell">${pronTxt}</td>
                     <td class="result-cell">_____ : _____</td>
-                    <td class="pts-cell">______</td></tr>`;
+                    <td class="pts-cell">______</td>
+                </tr>`;
             }
             html += `</tbody></table><div class="footer-note">⚽ Continúa en la página siguiente (partidos 37 al 72) ⚽</div></div>`;
             
@@ -778,12 +782,16 @@
                 const m = partidos[i];
                 const pron = p.pronosticos[i] || { local: null, visitante: null };
                 const pronTxt = (pron.local !== null && pron.visitante !== null) ? `${pron.local} : ${pron.visitante}` : "___ : ___";
-                html += `<tr><td style="text-align:center;">${m.no}</td><td style="text-align:center;">${m.grupo}</td>
-                    <td class="team-cell">${getTeamText(m.local)}</td><td class="team-cell">${getTeamText(m.visitante)}</td>
+                html += `<tr>
+                    <td style="text-align:center;">${m.no}</td>
+                    <td style="text-align:center;">${m.grupo}</td>
+                    <td class="team-cell">${getTeamText(m.local)}</td>
+                    <td class="team-cell">${getTeamText(m.visitante)}</td>
                     <td style="font-size:8px;">${formatFechaShort(m.fechaHora)}</td>
                     <td class="pronostico-cell">${pronTxt}</td>
                     <td class="result-cell">_____ : _____</td>
-                    <td class="pts-cell">______</td></tr>`;
+                    <td class="pts-cell">______</td>
+                </tr>`;
             }
             html += `</tbody></table><div class="footer-note">⚽ 72 PARTIDOS FASE DE GRUPOS MUNDIAL MÉXICO 2026 | LLENE MARCADOR REAL Y CALCULE SUS PUNTOS ⚽</div></div>`;
         }
