@@ -416,7 +416,7 @@
 
 <script>
     const flagMap = {
-        "MÉXICO":"🇲🇽","SUDÁFRICA":"🇿🇦","COREA DEL SUR":"🇰🇷","CHEQUIA":"🇨🇿","CANADÁ":"🇨🇦","BOSNIA Y HERZEGOVINA":"🇧🇦","QATAR":"🇶🇦","SUIZA":"🇨🇭",
+        "MÉXICO":"🇲🇽","SUDÁFRICA":"🇿🇦","COREA DEL SUR":"🇰🇷","REPUBLICA CHECA":"🇨🇿","CANADÁ":"🇨🇦","BOSNIA Y HERZEGOVINA":"🇧🇦","QATAR":"🇶🇦","SUIZA":"🇨🇭",
         "ESTADOS UNIDOS":"🇺🇸","PARAGUAY":"🇵🇾","BRASIL":"🇧🇷","MARRUECOS":"🇲🇦","HAITÍ":"🇭🇹","ESCOCIA":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","AUSTRALIA":"🇦🇺","TURQUÍA":"🇹🇷",
         "ALEMANIA":"🇩🇪","CURAZAO":"🇨🇼","PAÍSES BAJOS":"🇳🇱","JAPÓN":"🇯🇵","COSTA DE MARFIL":"🇨🇮","ECUADOR":"🇪🇨","SUECIA":"🇸🇪","TÚNEZ":"🇹🇳",
         "ESPAÑA":"🇪🇸","CABO VERDE":"🇨🇻","BÉLGICA":"🇧🇪","EGIPTO":"🇪🇬","ARABIA SAUDÍ":"🇸🇦","URUGUAY":"🇺🇾","IRÁN":"🇮🇷","NUEVA ZELANDA":"🇳🇿",
@@ -427,7 +427,7 @@
     function getTeamText(name) { return name.toUpperCase(); }
 
     const partidosData = [
-        { no:1, grupo:"A", local:"MÉXICO", visitante:"SUDÁFRICA", fechaHora:"2026-06-11 13:00:00" },{ no:2, grupo:"A", local:"COREA DEL SUR", visitante:"CHEQUIA", fechaHora:"2026-06-11 20:00:00" },
+        { no:1, grupo:"A", local:"MÉXICO", visitante:"SUDÁFRICA", fechaHora:"2026-06-11 13:00:00" },{ no:2, grupo:"A", local:"COREA DEL SUR", visitante:"REPUBLICA CHECA", fechaHora:"2026-06-11 20:00:00" },
         { no:3, grupo:"B", local:"CANADÁ", visitante:"BOSNIA Y HERZEGOVINA", fechaHora:"2026-06-12 13:00:00" },{ no:4, grupo:"D", local:"ESTADOS UNIDOS", visitante:"PARAGUAY", fechaHora:"2026-06-12 19:00:00" },
         { no:5, grupo:"B", local:"QATAR", visitante:"SUIZA", fechaHora:"2026-06-13 13:00:00" },{ no:6, grupo:"C", local:"BRASIL", visitante:"MARRUECOS", fechaHora:"2026-06-13 16:00:00" },
         { no:7, grupo:"C", local:"HAITÍ", visitante:"ESCOCIA", fechaHora:"2026-06-13 19:00:00" },{ no:8, grupo:"D", local:"AUSTRALIA", visitante:"TURQUÍA", fechaHora:"2026-06-13 22:00:00" },
@@ -439,7 +439,7 @@
         { no:19, grupo:"J", local:"ARGENTINA", visitante:"ARGELIA", fechaHora:"2026-06-16 19:00:00" },{ no:20, grupo:"J", local:"AUSTRIA", visitante:"JORDANIA", fechaHora:"2026-06-16 22:00:00" },
         { no:21, grupo:"K", local:"PORTUGAL", visitante:"RD CONGO", fechaHora:"2026-06-17 11:00:00" },{ no:22, grupo:"L", local:"INGLATERRA", visitante:"CROACIA", fechaHora:"2026-06-17 14:00:00" },
         { no:23, grupo:"L", local:"GHANA", visitante:"PANAMÁ", fechaHora:"2026-06-17 17:00:00" },{ no:24, grupo:"K", local:"UZBEKISTÁN", visitante:"COLOMBIA", fechaHora:"2026-06-17 20:00:00" },
-        { no:25, grupo:"A", local:"CHEQUIA", visitante:"SUDÁFRICA", fechaHora:"2026-06-18 10:00:00" },{ no:26, grupo:"B", local:"SUIZA", visitante:"BOSNIA Y HERZEGOVINA", fechaHora:"2026-06-18 13:00:00" },
+        { no:25, grupo:"A", local:"REPUBLICA CHECA", visitante:"SUDÁFRICA", fechaHora:"2026-06-18 10:00:00" },{ no:26, grupo:"B", local:"SUIZA", visitante:"BOSNIA Y HERZEGOVINA", fechaHora:"2026-06-18 13:00:00" },
         { no:27, grupo:"B", local:"CANADÁ", visitante:"QATAR", fechaHora:"2026-06-18 16:00:00" },{ no:28, grupo:"A", local:"MÉXICO", visitante:"COREA DEL SUR", fechaHora:"2026-06-18 19:00:00" },
         { no:29, grupo:"D", local:"ESTADOS UNIDOS", visitante:"AUSTRALIA", fechaHora:"2026-06-19 13:00:00" },{ no:30, grupo:"C", local:"ESCOCIA", visitante:"MARRUECOS", fechaHora:"2026-06-19 16:00:00" },
         { no:31, grupo:"C", local:"BRASIL", visitante:"HAITÍ", fechaHora:"2026-06-19 19:30:00" },{ no:32, grupo:"D", local:"TURQUÍA", visitante:"PARAGUAY", fechaHora:"2026-06-19 21:00:00" },
@@ -453,7 +453,7 @@
         { no:47, grupo:"L", local:"PANAMÁ", visitante:"CROACIA", fechaHora:"2026-06-23 17:00:00" },{ no:48, grupo:"K", local:"COLOMBIA", visitante:"RD CONGO", fechaHora:"2026-06-23 20:00:00" },
         { no:49, grupo:"B", local:"SUIZA", visitante:"CANADÁ", fechaHora:"2026-06-24 13:00:00" },{ no:50, grupo:"B", local:"BOSNIA Y HERZEGOVINA", visitante:"QATAR", fechaHora:"2026-06-24 13:00:00" },
         { no:51, grupo:"C", local:"ESCOCIA", visitante:"BRASIL", fechaHora:"2026-06-24 16:00:00" },{ no:52, grupo:"C", local:"MARRUECOS", visitante:"HAITÍ", fechaHora:"2026-06-24 16:00:00" },
-        { no:53, grupo:"A", local:"CHEQUIA", visitante:"MÉXICO", fechaHora:"2026-06-24 19:00:00" },{ no:54, grupo:"A", local:"SUDÁFRICA", visitante:"COREA DEL SUR", fechaHora:"2026-06-24 19:00:00" },
+        { no:53, grupo:"A", local:"REPUBLICA CHECA", visitante:"MÉXICO", fechaHora:"2026-06-24 19:00:00" },{ no:54, grupo:"A", local:"SUDÁFRICA", visitante:"COREA DEL SUR", fechaHora:"2026-06-24 19:00:00" },
         { no:55, grupo:"E", local:"CURAZAO", visitante:"COSTA DE MARFIL", fechaHora:"2026-06-25 14:00:00" },{ no:56, grupo:"E", local:"ECUADOR", visitante:"ALEMANIA", fechaHora:"2026-06-25 14:00:00" },
         { no:57, grupo:"F", local:"JAPÓN", visitante:"SUECIA", fechaHora:"2026-06-25 17:00:00" },{ no:58, grupo:"F", local:"TÚNEZ", visitante:"PAÍSES BAJOS", fechaHora:"2026-06-25 17:00:00" },
         { no:59, grupo:"D", local:"TURQUÍA", visitante:"ESTADOS UNIDOS", fechaHora:"2026-06-25 20:00:00" },{ no:60, grupo:"D", local:"PARAGUAY", visitante:"AUSTRALIA", fechaHora:"2026-06-25 20:00:00" },
