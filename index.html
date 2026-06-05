@@ -350,7 +350,7 @@
 <div class="app-container">
     <div class="worldcup-header">
         <div class="title-section">
-            <h1>🏆 MUNDIAL MÉXICO 2026 🏆<br><span style="font-size: 0.7rem;">72 PARTIDOS OFICIALES | FASE DE GRUPOS</span></h1>
+            <h1>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 🏆<br><span style="font-size: 0.7rem;">72 PARTIDOS OFICIALES | FASE DE GRUPOS</span></h1>
             <p>📋 CONTROL EXCEL: NO. | GRUPO | SELECCIÓN VS SELECCIÓN | FECHA Y HORA</p>
         </div>
         <div class="btn-group">
@@ -385,7 +385,8 @@
             <div class="card">
                 <div class="card-header"><h2>🏅 TABLA GENERAL DE POSICIONES</h2><span class="badge-72">CLASIFICACIÓN</span></div>
                 <table class="general-ranking" id="generalRankingTable">
-                    <thead><tr><th>POS</th><th>PARTICIPANTE</th><th>PUNTOS</th></tr></thead>
+                    <thead><tr><th>POS</th><th>PARTICIPANTE</th><th>PUNTOS</th></tr>
+                    </thead>
                     <tbody id="generalRankingBody"></tbody>
                 </table>
             </div>
@@ -846,7 +847,7 @@
         
         for(let p of participantes){
             html += `<div class="page">
-                <h2>🏆 MUNDIAL MÉXICO 2026 - ${p.nombre.toUpperCase()} 🏆</h2>
+                <h2>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 - ${p.nombre.toUpperCase()} 🏆</h2>
                 <div class="subheader">📄 PÁGINA 1 DE 2 | PARTIDOS 1 AL 36 | MARCADOR REAL Y PUNTOS (LLENAR A MANO)</div>
                 <table><thead><tr><th>#</th><th>GRUPO</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA</th><th>PRONÓSTICO</th><th>MARCADOR REAL</th><th>PTS</th></tr></thead><tbody>`;
             for(let i=0; i<36; i++){
@@ -862,12 +863,12 @@
                     <td class="pronostico-cell">${pronTxt}</td>
                     <td class="result-cell">_____ : _____</td>
                     <td class="pts-cell">______</td>
-                </tr>`;
+                	</tr>`;
             }
             html += `</tbody></table><div class="footer-note">⚽ Continúa en la página siguiente (partidos 37 al 72) ⚽</div></div>`;
             
             html += `<div class="page">
-                <h2>🏆 MUNDIAL MÉXICO 2026 - ${p.nombre.toUpperCase()} 🏆</h2>
+                <h2>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 - ${p.nombre.toUpperCase()} 🏆</h2>
                 <div class="subheader">📄 PÁGINA 2 DE 2 | PARTIDOS 37 AL 72 | MARCADOR REAL Y PUNTOS (LLENAR A MANO)</div>
                 <table><thead><tr><th>#</th><th>GRUPO</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA</th><th>PRONÓSTICO</th><th>MARCADOR REAL</th><th>PTS</th></tr></thead><tbody>`;
             for(let i=36; i<72; i++){
@@ -883,7 +884,7 @@
                     <td class="pronostico-cell">${pronTxt}</td>
                     <td class="result-cell">_____ : _____</td>
                     <td class="pts-cell">______</td>
-                </tr>`;
+                	</tr>`;
             }
             html += `</tbody></table><div class="footer-note">⚽ 72 PARTIDOS FASE DE GRUPOS MUNDIAL MÉXICO 2026 | LLENE MARCADOR REAL Y CALCULE SUS PUNTOS ⚽</div></div>`;
         }
