@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>QUINIELA MUNDIAL 2026 | 72 PARTIDOS FASE DE GRUPOS</title>
+    <title>QUINIELA FAMILIAR SNISP MUNDIAL 2026 | 72 PARTIDOS FASE DE GRUPOS</title>
     <style>
         * {
             margin: 0;
@@ -79,6 +79,9 @@
 
         .btn-danger { background: #db3a4a; color: white; }
         .btn-danger:hover { background: #c12f3e; }
+        
+        .btn-excel { background: #1F7B4D; color: white; }
+        .btn-excel:hover { background: #2a9d64; transform: translateY(-2px); }
 
         .two-columns {
             display: grid;
@@ -352,6 +355,7 @@
         </div>
         <div class="btn-group">
             <button id="printCedulasBtn" class="btn btn-primary">🖨️ CÉDULAS (2 PÁGINAS POR PARTICIPANTE)</button>
+            <button id="exportExcelBtn" class="btn btn-excel">📊 DESCARGAR EXCEL (CONTROL COMPLETO)</button>
             <button id="resetAllBtn" class="btn btn-danger">♻️ REINICIAR TODO</button>
         </div>
     </div>
@@ -414,6 +418,7 @@
 <div id="pronosModal" class="modal"><div class="modal-content"><div style="display: flex; justify-content: space-between;"><h3 id="pronosModalTitle">🌍 PRONÓSTICOS</h3><button id="closePronosModal" style="background:none; border:none; font-size:28px;">&times;</button></div><div id="pronosList"></div><div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;"><button id="savePronosBtn" class="btn btn-primary">💾 GUARDAR</button><button id="cancelPronosBtn" class="btn btn-outline">CANCELAR</button></div></div></div>
 <div id="editModal" class="modal"><div class="modal-content"><h3>✏️ EDITAR PARTIDOS</h3><div id="editMatchesList"></div><div style="display: flex; justify-content: flex-end; gap: 12px;"><button id="closeEditModal" class="btn btn-outline">CERRAR</button><button id="applyEditBtn" class="btn btn-primary">APLICAR</button></div></div></div>
 
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script>
     const flagMap = {
         "MÉXICO":"🇲🇽","SUDÁFRICA":"🇿🇦","COREA DEL SUR":"🇰🇷","REPUBLICA CHECA":"🇨🇿","CANADÁ":"🇨🇦","BOSNIA Y HERZEGOVINA":"🇧🇦","QATAR":"🇶🇦","SUIZA":"🇨🇭",
@@ -471,6 +476,8 @@
 
     function formatFecha(fh) { if(!fh) return ""; let d=new Date(fh); return d.toLocaleDateString('es-ES') + " " + d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
     function formatFechaShort(fh) { if(!fh) return ""; let d=new Date(fh); return d.toLocaleDateString('es-ES'); }
+    function formatFechaExcel(fh) { if(!fh) return ""; let d=new Date(fh); return d.toLocaleDateString('es-ES'); }
+    function formatHoraExcel(fh) { if(!fh) return ""; let d=new Date(fh); return d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
     function store() { localStorage.setItem('QM2026_FINAL_72', JSON.stringify({ partidos, participantes, nextId })); }
     
     function calcularPuntos(pronostico, resultadoReal) {
@@ -493,11 +500,7 @@
         renderParticipants();
     }
     
-    // ============================================================
-    // FUNCIÓN CORREGIDA - RANKING CON POSICIONES DENSAS (1,1,1,2,2,3,4,5...)
-    // ============================================================
     function renderGeneralRanking() {
-        // Ordenar por puntos de mayor a menor
         const sorted = [...participantes].sort((a, b) => b.puntos - a.puntos);
         const tbody = document.getElementById('generalRankingBody');
         tbody.innerHTML = '';
@@ -514,12 +517,10 @@
             let currentPoints = sorted[i].puntos;
             let countSamePoints = 1;
             
-            // Contar cuántos participantes tienen la misma cantidad de puntos
             while (i + countSamePoints < sorted.length && sorted[i + countSamePoints].puntos === currentPoints) {
                 countSamePoints++;
             }
             
-            // Renderizar todos los que comparten esta posición
             for (let j = 0; j < countSamePoints; j++) {
                 const p = sorted[i + j];
                 let rankClass = '';
@@ -536,11 +537,9 @@
                     <td style="text-align:center; font-weight:bold;">${position} ${medalEmoji}</td>
                     <td><strong>${p.nombre.toUpperCase()}</strong></td>
                     <td class="puntos-destacados">${p.puntos}</td>
-                </tr>`;
+                	</tr>`;
             }
             
-            // Avanzar al siguiente grupo de puntos
-            // La siguiente posición será la posición actual + la cantidad de personas que empataron
             i += countSamePoints;
             position += countSamePoints;
         }
@@ -606,7 +605,7 @@
                 <td>${formatFecha(p.fechaHora)}</td>
                 <td><div class="score-input"><input type="number" class="realL-${idx}" value="${realL}" style="width:36px;"> : <input type="number" class="realV-${idx}" value="${realV}" style="width:36px;"></div></td>
                 <td>${(p.real.local!==null && p.real.visitante!==null)?'✅':'⚽'}</td>
-            </tr>`;
+            	</tr>`;
         });
     }
     
@@ -725,7 +724,102 @@
         if(confirm("⚠️ ¿Reiniciar todo?")){ localStorage.removeItem('QM2026_FINAL_72'); setDefault(); load(); }
     }
     
-    // IMPRESIÓN EXACTAMENTE 2 PÁGINAS POR PARTICIPANTE
+    // EXPORTAR A EXCEL CON TODOS LOS PARTICIPANTES Y SUS PRONÓSTICOS
+    function exportToExcel() {
+        if(participantes.length === 0) {
+            alert("No hay participantes para exportar");
+            return;
+        }
+        
+        let excelData = [];
+        
+        // Encabezados: información del partido + cada participante
+        let headers = ['N°', 'GRUPO', 'LOCAL', 'VISITANTE', 'FECHA', 'HORA', 'MARCADOR REAL (LLENAR)'];
+        for(let p of participantes) {
+            headers.push(`${p.nombre.toUpperCase()} - PRONÓSTICO`);
+            headers.push(`${p.nombre.toUpperCase()} - PTS (MANUAL)`);
+        }
+        excelData.push(headers);
+        
+        // Datos de cada partido
+        for(let i = 0; i < partidos.length; i++) {
+            const m = partidos[i];
+            const fechaStr = formatFechaExcel(m.fechaHora);
+            const horaStr = formatHoraExcel(m.fechaHora);
+            
+            let row = [m.no, m.grupo, m.local, m.visitante, fechaStr, horaStr, '___ : ___'];
+            
+            for(let p of participantes) {
+                const pron = p.pronosticos[i] || {local: null, visitante: null};
+                const pronosticoStr = (pron.local !== null && pron.visitante !== null) 
+                    ? `${pron.local} : ${pron.visitante}` 
+                    : '___ : ___';
+                row.push(pronosticoStr);
+                row.push(''); // Espacio para puntos manuales
+            }
+            excelData.push(row);
+        }
+        
+        // Fila de totales
+        let totalRow = ['', '', '', '', '', '', 'TOTAL PUNTOS:'];
+        for(let p of participantes) {
+            totalRow.push('');
+            totalRow.push(p.puntos);
+        }
+        excelData.push(totalRow);
+        
+        // Hoja de instrucciones
+        let instruccionesData = [
+            ['📋 INSTRUCCIONES PARA EL CONTROL MANUAL DE LA QUINIELA'],
+            [''],
+            ['1. COMPLETAR MARCADOR REAL:', 'Después de cada partido, anota el resultado real en la columna "MARCADOR REAL" (ejemplo: 2:1)'],
+            ['2. CALCULAR PUNTOS:', 'En la columna "PTS (MANUAL)" de cada participante, anota los puntos que obtuvo:'],
+            ['   • 3 PUNTOS:', 'Si acertó EXACTAMENTE el marcador'],
+            ['   • 1 PUNTO:', 'Si acertó quién ganó o el empate, pero no el marcador exacto'],
+            ['   • 0 PUNTOS:', 'Si no acertó ni el ganador ni el empate'],
+            ['3. SISTEMA DE PUNTUACIÓN:', ''],
+            ['   - Acierto exacto (Ej: pronóstico 2:1 y real 2:1) = 3 puntos'],
+            ['   - Acierto de resultado (ganador/empate) = 1 punto'],
+            ['   - Fallo total = 0 puntos'],
+            ['4. AL FINAL:', 'Suma todos los puntos de cada participante para ver la clasificación final'],
+            [''],
+            ['¡SUERTE A TODOS! 🏆⚽']
+        ];
+        
+        const wsDatos = XLSX.utils.aoa_to_sheet(excelData);
+        const wsInstrucciones = XLSX.utils.aoa_to_sheet(instruccionesData);
+        
+        // Ajustar anchos
+        let cols = [{wch:5}, {wch:6}, {wch:22}, {wch:22}, {wch:12}, {wch:8}, {wch:20}];
+        for(let i = 0; i < participantes.length; i++) {
+            cols.push({wch:22});
+            cols.push({wch:15});
+        }
+        wsDatos['!cols'] = cols;
+        
+        // Formato a encabezados
+        const range = XLSX.utils.decode_range(wsDatos['!ref']);
+        for(let C = range.s.c; C <= range.e.c; ++C) {
+            const address = XLSX.utils.encode_cell({r:0, c:C});
+            if(!wsDatos[address]) continue;
+            wsDatos[address].s = { 
+                font: { bold: true, sz: 10, color: { rgb: "FFFFFF" } }, 
+                fill: { fgColor: { rgb: "1F7B4D" } },
+                alignment: { horizontal: "center", wrapText: true }
+            };
+        }
+        
+        wsInstrucciones['!cols'] = [{wch:30}, {wch:55}];
+        
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, wsDatos, "CONTROL_COMPLETO");
+        XLSX.utils.book_append_sheet(wb, wsInstrucciones, "INSTRUCCIONES");
+        
+        const fileName = `CONTROL_QUINIELA_MUNDIAL_2026_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+    }
+    
+    // IMPRESIÓN DE CÉDULAS (SIN MODIFICAR)
     function printCedulas(){
         if(participantes.length === 0){ alert("No hay participantes"); return; }
         let win = window.open('', '_blank');
@@ -751,7 +845,6 @@
         </head><body>`;
         
         for(let p of participantes){
-            // PÁGINA 1: partidos 1 al 36
             html += `<div class="page">
                 <h2>🏆 MUNDIAL MÉXICO 2026 - ${p.nombre.toUpperCase()} 🏆</h2>
                 <div class="subheader">📄 PÁGINA 1 DE 2 | PARTIDOS 1 AL 36 | MARCADOR REAL Y PUNTOS (LLENAR A MANO)</div>
@@ -773,7 +866,6 @@
             }
             html += `</tbody></table><div class="footer-note">⚽ Continúa en la página siguiente (partidos 37 al 72) ⚽</div></div>`;
             
-            // PÁGINA 2: partidos 37 a 72
             html += `<div class="page">
                 <h2>🏆 MUNDIAL MÉXICO 2026 - ${p.nombre.toUpperCase()} 🏆</h2>
                 <div class="subheader">📄 PÁGINA 2 DE 2 | PARTIDOS 37 AL 72 | MARCADOR REAL Y PUNTOS (LLENAR A MANO)</div>
@@ -808,6 +900,7 @@
     document.getElementById('addPlayerBtn')?.addEventListener('click', addPlayer);
     document.getElementById('importCsvBtn')?.addEventListener('click', importCSV);
     document.getElementById('printCedulasBtn')?.addEventListener('click', printCedulas);
+    document.getElementById('exportExcelBtn')?.addEventListener('click', exportToExcel);
     document.getElementById('resetAllBtn')?.addEventListener('click', resetAll);
     document.getElementById('savePronosBtn')?.addEventListener('click', savePronos);
     document.getElementById('closePronosModal')?.addEventListener('click', () => document.getElementById('pronosModal').style.display = 'none');
