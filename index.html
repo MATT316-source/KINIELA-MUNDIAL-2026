@@ -80,6 +80,9 @@
         .btn-danger { background: #db3a4a; color: white; }
         .btn-danger:hover { background: #c12f3e; }
         
+        .btn-warning { background: #e68a2e; color: white; }
+        .btn-warning:hover { background: #f0a04a; transform: translateY(-2px); }
+        
         .btn-excel { background: #1F7B4D; color: white; }
         .btn-excel:hover { background: #2a9d64; transform: translateY(-2px); }
 
@@ -199,6 +202,13 @@
             font-weight: bold;
             padding: 4px 0;
             font-size: 0.7rem;
+            transition: all 0.2s;
+        }
+
+        .score-input input:focus {
+            outline: none;
+            border-color: #ffcd4a;
+            box-shadow: 0 0 0 2px rgba(255, 205, 74, 0.3);
         }
 
         .general-ranking {
@@ -302,11 +312,70 @@
             background: #ffffff;
             border-radius: 36px;
             width: 100%;
-            max-width: 1100px;
+            max-width: 500px;
             max-height: 85vh;
             overflow-y: auto;
-            padding: 18px;
+            padding: 24px;
             border-top: 8px solid #ffcd4a;
+        }
+
+        .modal-content h3 {
+            color: #0e4727;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .reset-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .reset-option {
+            background: #f5f5f0;
+            border-radius: 24px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .reset-option:hover {
+            background: #edede5;
+            transform: translateX(5px);
+        }
+
+        .reset-option.selected {
+            border-color: #ffcd4a;
+            background: #fffef5;
+        }
+
+        .reset-option h4 {
+            color: #1e6e3e;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .reset-option p {
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .reset-option .badge {
+            display: inline-block;
+            background: #e0e0d5;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
         }
 
         .pronostico-compacto {
@@ -321,6 +390,17 @@
             flex-wrap: wrap;
             gap: 6px;
             border-left: 4px solid #ffcd4a;
+        }
+
+        .pronostico-compacto input {
+            width: 45px;
+            background: white;
+            border: 1px solid #c0cfb0;
+            border-radius: 30px;
+            text-align: center;
+            font-weight: bold;
+            padding: 4px 0;
+            font-size: 0.7rem;
         }
 
         .edit-match-row {
@@ -344,19 +424,35 @@
             font-weight: bold;
             text-transform: uppercase;
         }
+
+        .saving-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e6e3e;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
 <div class="app-container">
     <div class="worldcup-header">
         <div class="title-section">
-            <h1>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 🏆<br><span style="font-size: 0.7rem;">72 PARTIDOS OFICIALES | FASE DE GRUPOS</span></h1>
+            <h1>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 🏆<br><span style="font-size: 0.7rem;">72 PARTIDOS OFICIALES | FASE DE GRUPOS | ACTUALIZACIÓN EN TIEMPO REAL</span></h1>
             <p>📋 CONTROL EXCEL: NO. | GRUPO | SELECCIÓN VS SELECCIÓN | FECHA Y HORA</p>
         </div>
         <div class="btn-group">
-            <button id="printCedulasBtn" class="btn btn-primary">🖨️ CÉDULAS (2 PÁGINAS POR PARTICIPANTE)</button>
-            <button id="exportExcelBtn" class="btn btn-excel">📊 DESCARGAR EXCEL (CONTROL COMPLETO)</button>
-            <button id="resetAllBtn" class="btn btn-danger">♻️ REINICIAR TODO</button>
+            <button id="printCedulasBtn" class="btn btn-primary">🖨️ CÉDULAS</button>
+            <button id="exportExcelBtn" class="btn btn-excel">📊 EXCEL</button>
+            <button id="resetOptionsBtn" class="btn btn-warning">🔄 OPCIONES DE REINICIO</button>
         </div>
     </div>
 
@@ -365,45 +461,44 @@
             <div class="card">
                 <div class="card-header">
                     <h2>📅 CALENDARIO OFICIAL <span class="badge-72">72 PARTIDOS · GRUPOS A-L</span></h2>
-                    <span style="background:#2b8c54; color:white; padding:2px 12px; border-radius:30px; font-size:0.7rem;">⚽ FASE DE GRUPOS</span>
+                    <span style="background:#2b8c54; color:white; padding:2px 12px; border-radius:30px; font-size:0.7rem;">⚽ ACTUALIZACIÓN AUTOMÁTICA</span>
                 </div>
                 <div class="matches-scroll">
                     <table class="matches-table">
-                        <thead><tr><th>#</th><th>GRUPO</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA/HORA</th><th>MARCADOR REAL</th><th></th></tr>
+                        <thead>
+                            <tr><th>#</th><th>GRUPO</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA/HORA</th><th>MARCADOR REAL</th><th></th></tr>
                         </thead>
                         <tbody id="matchesTableBody"></tbody>
                     </table>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px;">
-                    <button id="saveResultsBtn" class="btn btn-primary">💾 GUARDAR RESULTADOS</button>
-                    <button id="editMatchesBtn" class="btn btn-outline">✏️ EDITAR PARTIDOS</button>
+                    <button id="editMatchesBtn" class="btn btn-outline">✏️ EDITAR CALENDARIO</button>
                 </div>
             </div>
         </div>
 
         <div>
             <div class="card">
-                <div class="card-header"><h2>🏅 TABLA GENERAL DE POSICIONES</h2><span class="badge-72">CLASIFICACIÓN</span></div>
+                <div class="card-header"><h2>🏅 TABLA GENERAL</h2><span class="badge-72">EN VIVO</span></div>
                 <table class="general-ranking" id="generalRankingTable">
-                    <thead><tr><th>POS</th><th>PARTICIPANTE</th><th>PUNTOS</th></tr>
-                    </thead>
+                    <thead><tr><th>POS</th><th>PARTICIPANTE</th><th>PUNTOS</th></tr></thead>
                     <tbody id="generalRankingBody"></tbody>
                 </table>
             </div>
 
             <div class="card">
-                <div class="card-header"><h2>👥 GESTIÓN DE PARTICIPANTES</h2></div>
+                <div class="card-header"><h2>👥 PARTICIPANTES</h2></div>
                 <div style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;">
                     <input type="text" id="newPlayerName" placeholder="NOMBRE EJ: JAVIER" style="flex:1; border-radius: 60px; border: 1px solid #1e6e3e; font-weight: bold; text-transform: uppercase;">
-                    <button id="addPlayerBtn" class="btn btn-secondary" style="padding: 6px 14px;">➕ AGREGAR</button>
+                    <button id="addPlayerBtn" class="btn btn-secondary">➕ AGREGAR</button>
                 </div>
                 <div id="participantsList"></div>
                 <div class="footer-note" style="margin-top: 8px;">⭐ ESTADO: ✅ COMPLETO | ⚠️ PENDIENTE</div>
             </div>
 
             <div class="card">
-                <div class="card-header"><h2>🔗 IMPORTAR RESULTADOS CSV</h2></div>
-                <p style="font-size:0.65rem;">FORMATO: GOLES_LOCAL, GOLES_VISITANTE (72 FILAS EN ORDEN)</p>
+                <div class="card-header"><h2>🔗 IMPORTAR CSV</h2></div>
+                <p style="font-size:0.65rem;">FORMATO: GOLES_LOCAL, GOLES_VISITANTE (72 FILAS)</p>
                 <div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
                     <input type="text" id="csvUrl" placeholder="URL DEL CSV" style="flex:1; border-radius:60px; border:1px solid #2b8c54; padding: 6px 10px; font-size:0.7rem;">
                     <button id="importCsvBtn" class="btn btn-outline">📥 IMPORTAR</button>
@@ -412,12 +507,47 @@
             </div>
         </div>
     </div>
-    <div class="footer-note">⚽ 72 PARTIDOS OFICIALES · BANDERAS · GRUPOS A-L · PUNTOS AUTOMÁTICOS ⚽</div>
+    <div class="footer-note">⚽ ACTUALIZACIÓN EN TIEMPO REAL · PUNTOS AUTOMÁTICOS ⚽</div>
 </div>
 
+<div id="savingIndicator" class="saving-indicator">💾 ACTUALIZANDO...</div>
+
 <!-- MODALES -->
-<div id="pronosModal" class="modal"><div class="modal-content"><div style="display: flex; justify-content: space-between;"><h3 id="pronosModalTitle">🌍 PRONÓSTICOS</h3><button id="closePronosModal" style="background:none; border:none; font-size:28px;">&times;</button></div><div id="pronosList"></div><div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;"><button id="savePronosBtn" class="btn btn-primary">💾 GUARDAR</button><button id="cancelPronosBtn" class="btn btn-outline">CANCELAR</button></div></div></div>
-<div id="editModal" class="modal"><div class="modal-content"><h3>✏️ EDITAR PARTIDOS</h3><div id="editMatchesList"></div><div style="display: flex; justify-content: flex-end; gap: 12px;"><button id="closeEditModal" class="btn btn-outline">CERRAR</button><button id="applyEditBtn" class="btn btn-primary">APLICAR</button></div></div></div>
+<div id="pronosModal" class="modal"><div class="modal-content"><div style="display: flex; justify-content: space-between;"><h3 id="pronosModalTitle">🌍 PRONÓSTICOS</h3><button id="closePronosModal" style="background:none; border:none; font-size:28px;">&times;</button></div><div id="pronosList"></div><div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;"><button id="cancelPronosBtn" class="btn btn-outline">CERRAR</button></div></div></div>
+
+<div id="editModal" class="modal"><div class="modal-content"><h3>✏️ EDITAR CALENDARIO</h3><div id="editMatchesList"></div><div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;"><button id="closeEditModal" class="btn btn-outline">CERRAR</button><button id="applyEditBtn" class="btn btn-primary">APLICAR CAMBIOS</button></div></div></div>
+
+<div id="resetModal" class="modal">
+    <div class="modal-content">
+        <h3>🔄 ¿QUÉ DESEAS REINICIAR?</h3>
+        <div class="reset-options">
+            <div class="reset-option" data-reset="results">
+                <h4>📊 SOLO RESULTADOS REALES</h4>
+                <p>Reinicia únicamente los marcadores de los partidos. Mantiene participantes y pronósticos.</p>
+                <span class="badge">Los pronósticos se conservan</span>
+            </div>
+            <div class="reset-option" data-reset="participants">
+                <h4>👥 SOLO PARTICIPANTES</h4>
+                <p>Elimina todos los participantes y sus pronósticos. Mantiene resultados reales y calendario.</p>
+                <span class="badge">Resultados reales se conservan</span>
+            </div>
+            <div class="reset-option" data-reset="calendar">
+                <h4>📅 CALENDARIO OFICIAL</h4>
+                <p>Restaura el calendario original (72 partidos). ¡Cuidado! Esto sobrescribe cualquier edición.</p>
+                <span class="badge">Respalda tus cambios antes</span>
+            </div>
+            <div class="reset-option" data-reset="all">
+                <h4>⚠️ TODO (REINICIO COMPLETO)</h4>
+                <p>Reinicia absolutamente todo: resultados, participantes, pronósticos y calendario.</p>
+                <span class="badge">Vuelve al estado inicial</span>
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button id="cancelResetBtn" class="btn btn-outline">CANCELAR</button>
+            <button id="confirmResetBtn" class="btn btn-danger">CONFIRMAR REINICIO</button>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script>
@@ -429,10 +559,11 @@
         "FRANCIA":"🇫🇷","SENEGAL":"🇸🇳","IRAK":"🇮🇶","NORUEGA":"🇳🇴","ARGENTINA":"🇦🇷","ARGELIA":"🇩🇿","AUSTRIA":"🇦🇹","JORDANIA":"🇯🇴",
         "PORTUGAL":"🇵🇹","RD CONGO":"🇨🇩","INGLATERRA":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","CROACIA":"🇭🇷","GHANA":"🇬🇭","PANAMÁ":"🇵🇦","UZBEKISTÁN":"🇺🇿","COLOMBIA":"🇨🇴"
     };
+    
     function getTeamWithFlag(name) { let upper = name.toUpperCase().trim(); let flag = flagMap[upper] || "🏁"; return `<span class="team-with-flag"><span class="flag-icon">${flag}</span> ${upper}</span>`; }
     function getTeamText(name) { return name.toUpperCase(); }
 
-    const partidosData = [
+    const partidosDataOriginal = [
         { no:1, grupo:"A", local:"MÉXICO", visitante:"SUDÁFRICA", fechaHora:"2026-06-11 13:00:00" },{ no:2, grupo:"A", local:"COREA DEL SUR", visitante:"REPUBLICA CHECA", fechaHora:"2026-06-11 20:00:00" },
         { no:3, grupo:"B", local:"CANADÁ", visitante:"BOSNIA Y HERZEGOVINA", fechaHora:"2026-06-12 13:00:00" },{ no:4, grupo:"D", local:"ESTADOS UNIDOS", visitante:"PARAGUAY", fechaHora:"2026-06-12 19:00:00" },
         { no:5, grupo:"B", local:"QATAR", visitante:"SUIZA", fechaHora:"2026-06-13 13:00:00" },{ no:6, grupo:"C", local:"BRASIL", visitante:"MARRUECOS", fechaHora:"2026-06-13 16:00:00" },
@@ -471,15 +602,27 @@
         { no:71, grupo:"J", local:"ARGELIA", visitante:"AUSTRIA", fechaHora:"2026-06-27 20:00:00" },{ no:72, grupo:"J", local:"JORDANIA", visitante:"ARGENTINA", fechaHora:"2026-06-27 20:00:00" }
     ];
 
-    let partidos = partidosData.map(p => ({ ...p, real: { local: null, visitante: null } }));
+    let partidos = partidosDataOriginal.map(p => ({ ...p, real: { local: null, visitante: null } }));
     let participantes = [];
     let nextId = 1;
+    let updateTimeout = null;
+    let selectedResetOption = null;
 
     function formatFecha(fh) { if(!fh) return ""; let d=new Date(fh); return d.toLocaleDateString('es-ES') + " " + d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
     function formatFechaShort(fh) { if(!fh) return ""; let d=new Date(fh); return d.toLocaleDateString('es-ES'); }
     function formatFechaExcel(fh) { if(!fh) return ""; let d=new Date(fh); return d.toLocaleDateString('es-ES'); }
     function formatHoraExcel(fh) { if(!fh) return ""; let d=new Date(fh); return d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
-    function store() { localStorage.setItem('QM2026_FINAL_72', JSON.stringify({ partidos, participantes, nextId })); }
+    
+    function showSavingIndicator() {
+        const indicator = document.getElementById('savingIndicator');
+        indicator.style.opacity = '1';
+        setTimeout(() => { indicator.style.opacity = '0'; }, 500);
+    }
+    
+    function store() { 
+        localStorage.setItem('QM2026_FINAL_72', JSON.stringify({ partidos, participantes, nextId }));
+        showSavingIndicator();
+    }
     
     function calcularPuntos(pronostico, resultadoReal) {
         if (resultadoReal.local === null || resultadoReal.visitante === null) return 0;
@@ -505,42 +648,22 @@
         const sorted = [...participantes].sort((a, b) => b.puntos - a.puntos);
         const tbody = document.getElementById('generalRankingBody');
         tbody.innerHTML = '';
-        
         if (sorted.length === 0) {
             tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">❌ Sin participantes</td></tr>';
             return;
         }
-        
         let position = 1;
         let i = 0;
-        
         while (i < sorted.length) {
             let currentPoints = sorted[i].puntos;
             let countSamePoints = 1;
-            
-            while (i + countSamePoints < sorted.length && sorted[i + countSamePoints].puntos === currentPoints) {
-                countSamePoints++;
-            }
-            
+            while (i + countSamePoints < sorted.length && sorted[i + countSamePoints].puntos === currentPoints) countSamePoints++;
             for (let j = 0; j < countSamePoints; j++) {
                 const p = sorted[i + j];
-                let rankClass = '';
-                if (position === 1) rankClass = 'rank-1';
-                else if (position === 2) rankClass = 'rank-2';
-                else if (position === 3) rankClass = 'rank-3';
-                
-                let medalEmoji = '';
-                if (position === 1) medalEmoji = '🥇 ';
-                else if (position === 2) medalEmoji = '🥈 ';
-                else if (position === 3) medalEmoji = '🥉 ';
-                
-                tbody.innerHTML += `<tr class="${rankClass}">
-                    <td style="text-align:center; font-weight:bold;">${position} ${medalEmoji}</td>
-                    <td><strong>${p.nombre.toUpperCase()}</strong></td>
-                    <td class="puntos-destacados">${p.puntos}</td>
-                	</tr>`;
+                let rankClass = position === 1 ? 'rank-1' : (position === 2 ? 'rank-2' : (position === 3 ? 'rank-3' : ''));
+                let medalEmoji = position === 1 ? '🥇 ' : (position === 2 ? '🥈 ' : (position === 3 ? '🥉 ' : ''));
+                tbody.innerHTML += `<tr class="${rankClass}"><td style="text-align:center; font-weight:bold;">${position} ${medalEmoji}</td><td><strong>${p.nombre.toUpperCase()}</strong></td><td class="puntos-destacados">${p.puntos}</td></tr>`;
             }
-            
             i += countSamePoints;
             position += countSamePoints;
         }
@@ -563,33 +686,51 @@
             cont.appendChild(div);
         });
         document.querySelectorAll('.viewPronBtn').forEach(btn=>btn.addEventListener('click',()=>openPronModal(parseInt(btn.dataset.id))));
-        document.querySelectorAll('.delPartBtn').forEach(btn=>btn.addEventListener('click',()=>{ if(confirm('¿Eliminar?')){ participantes=participantes.filter(p=>p.id!==parseInt(btn.dataset.id)); store(); recalcAll(); renderParticipants(); renderGeneralRanking(); } }));
+        document.querySelectorAll('.delPartBtn').forEach(btn=>btn.addEventListener('click',()=>{ if(confirm('¿Eliminar este participante?')){ participantes=participantes.filter(p=>p.id!==parseInt(btn.dataset.id)); store(); recalcAll(); renderParticipants(); renderGeneralRanking(); } }));
     }
     
-    function setDefault(){
-        participantes = []; nextId=1;
+    function resetResultsOnly() {
+        for (let i = 0; i < partidos.length; i++) {
+            partidos[i].real = { local: null, visitante: null };
+        }
+        recalcAll();
+        renderMatchesTable();
+        alert("✅ Resultados reales reiniciados. Los pronósticos de los participantes se conservan.");
+    }
+    
+    function resetParticipantsOnly() {
+        participantes = [];
+        nextId = 1;
+        store();
+        recalcAll();
+        renderMatchesTable();
+        alert("✅ Participantes eliminados. Los resultados reales se conservan.");
+    }
+    
+    function resetCalendarOnly() {
+        partidos = partidosDataOriginal.map(p => ({ ...p, real: { local: null, visitante: null } }));
+        // Limpiar pronósticos de participantes existentes
+        for (let p of participantes) {
+            p.pronosticos = partidos.map(() => ({ local: null, visitante: null }));
+        }
+        recalcAll();
+        renderMatchesTable();
+        alert("✅ Calendario restaurado a su estado original. Los resultados reales se han limpiado.");
+    }
+    
+    function resetEverything() {
+        partidos = partidosDataOriginal.map(p => ({ ...p, real: { local: null, visitante: null } }));
+        participantes = [];
+        nextId = 1;
+        // Agregar participantes de ejemplo
         let empty = partidos.map(()=>({local:null,visitante:null}));
         participantes.push({id:nextId++, nombre:"ANDRÉS G.", pronosticos:JSON.parse(JSON.stringify(empty)), puntos:0});
         participantes.push({id:nextId++, nombre:"MARTINA K.", pronosticos:JSON.parse(JSON.stringify(empty)), puntos:0});
         participantes.push({id:nextId++, nombre:"CARLOS V.", pronosticos:JSON.parse(JSON.stringify(empty)), puntos:0});
         store();
-    }
-    
-    function load(){
-        const saved = localStorage.getItem('QM2026_FINAL_72');
-        if(saved){
-            try{
-                const data = JSON.parse(saved);
-                if(data.partidos) partidos = data.partidos;
-                if(data.participantes) participantes = data.participantes;
-                if(data.nextId) nextId = data.nextId;
-                participantes.forEach(p => { if(!p.pronosticos || p.pronosticos.length!==72) p.pronosticos = partidos.map(()=>({local:null,visitante:null})); });
-            }catch(e){ setDefault(); }
-        } else { setDefault(); }
         recalcAll();
         renderMatchesTable();
-        renderParticipants();
-        renderGeneralRanking();
+        alert("✅ Reinicio completo realizado. Todo ha vuelto al estado inicial.");
     }
     
     function renderMatchesTable(){
@@ -604,24 +745,59 @@
                 <td>${getTeamWithFlag(p.local)}</td>
                 <td>${getTeamWithFlag(p.visitante)}</td>
                 <td>${formatFecha(p.fechaHora)}</td>
-                <td><div class="score-input"><input type="number" class="realL-${idx}" value="${realL}" style="width:36px;"> : <input type="number" class="realV-${idx}" value="${realV}" style="width:36px;"></div></td>
+                <td><div class="score-input"><input type="number" class="realL-${idx}" value="${realL}" style="width:36px;" data-match="${idx}" data-team="local"> : <input type="number" class="realV-${idx}" value="${realV}" style="width:36px;" data-match="${idx}" data-team="visitante"></div></td>
                 <td>${(p.real.local!==null && p.real.visitante!==null)?'✅':'⚽'}</td>
-            	</tr>`;
+            </tr>`;
         });
-    }
-    
-    function saveResults(){
-        for(let i=0;i<partidos.length;i++){
-            let lInp = document.querySelector(`.realL-${i}`), vInp = document.querySelector(`.realV-${i}`);
-            if(lInp && vInp){
-                let lv = lInp.value===''?null:parseInt(lInp.value);
-                let vv = vInp.value===''?null:parseInt(vInp.value);
-                if(isNaN(lv)) lv=null; if(isNaN(vv)) vv=null;
-                partidos[i].real = { local: lv, visitante: vv };
+        for(let i = 0; i < partidos.length; i++) {
+            const lInp = document.querySelector(`.realL-${i}`);
+            const vInp = document.querySelector(`.realV-${i}`);
+            if(lInp && vInp) {
+                lInp.addEventListener('input', () => updateRealTimeResult(i));
+                vInp.addEventListener('input', () => updateRealTimeResult(i));
             }
         }
-        store(); recalcAll(); renderMatchesTable();
-        alert("✅ Resultados guardados");
+    }
+    
+    function updateRealTimeResult(index) {
+        const lInp = document.querySelector(`.realL-${index}`);
+        const vInp = document.querySelector(`.realV-${index}`);
+        if(lInp && vInp) {
+            let lv = lInp.value === '' ? null : parseInt(lInp.value);
+            let vv = vInp.value === '' ? null : parseInt(vInp.value);
+            if(isNaN(lv)) lv = null;
+            if(isNaN(vv)) vv = null;
+            partidos[index].real = { local: lv, visitante: vv };
+            if(updateTimeout) clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(() => {
+                recalcAll();
+                renderMatchesTable();
+                updateTimeout = null;
+            }, 100);
+        }
+    }
+    
+    function handlePronosticoChange() {
+        if(updateTimeout) clearTimeout(updateTimeout);
+        updateTimeout = setTimeout(() => {
+            if(currentPlayer) {
+                let newPronos = [];
+                for(let i = 0; i < partidos.length; i++) {
+                    let lv = document.querySelector(`.prL-${i}`)?.value;
+                    let vv = document.querySelector(`.prV-${i}`)?.value;
+                    let L = lv === '' ? null : parseInt(lv);
+                    let V = vv === '' ? null : parseInt(vv);
+                    if(isNaN(L)) L = null;
+                    if(isNaN(V)) V = null;
+                    newPronos.push({local: L, visitante: V});
+                }
+                currentPlayer.pronosticos = newPronos;
+                recalcAll();
+                renderParticipants();
+                renderGeneralRanking();
+            }
+            updateTimeout = null;
+        }, 200);
     }
     
     let currentPlayer = null;
@@ -640,23 +816,9 @@
             <div><input type="number" class="prL-${idx}" value="${pron.local!==null?pron.local:''}" style="width:45px;"> : <input type="number" class="prV-${idx}" value="${pron.visitante!==null?pron.visitante:''}" style="width:45px;"></div>`;
             container.appendChild(div);
         });
+        const inputs = container.querySelectorAll('input[type="number"]');
+        inputs.forEach(input => { input.addEventListener('input', handlePronosticoChange); });
         document.getElementById('pronosModal').style.display='flex';
-    }
-    
-    function savePronos(){
-        if(!currentPlayer) return;
-        let newPronos = [];
-        for(let i=0;i<partidos.length;i++){
-            let lv = document.querySelector(`.prL-${i}`)?.value;
-            let vv = document.querySelector(`.prV-${i}`)?.value;
-            let L = lv===''?null:parseInt(lv), V = vv===''?null:parseInt(vv);
-            if(isNaN(L)) L=null; if(isNaN(V)) V=null;
-            newPronos.push({local:L, visitante:V});
-        }
-        currentPlayer.pronosticos = newPronos;
-        store(); recalcAll(); renderParticipants(); renderGeneralRanking();
-        document.getElementById('pronosModal').style.display='none';
-        alert("✅ Pronósticos guardados");
     }
     
     function openEditModal(){
@@ -685,7 +847,7 @@
         }
         store(); renderMatchesTable();
         document.getElementById('editModal').style.display='none';
-        alert("✅ Cambios aplicados");
+        alert("✅ Calendario actualizado");
     }
     
     async function importCSV(){
@@ -721,172 +883,76 @@
         document.getElementById('newPlayerName').value='';
     }
     
-    function resetAll(){
-        if(confirm("⚠️ ¿Reiniciar todo?")){ localStorage.removeItem('QM2026_FINAL_72'); setDefault(); load(); }
-    }
-    
-    // EXPORTAR A EXCEL CON TODOS LOS PARTICIPANTES Y SUS PRONÓSTICOS
     function exportToExcel() {
-        if(participantes.length === 0) {
-            alert("No hay participantes para exportar");
-            return;
-        }
-        
+        if(participantes.length === 0) { alert("No hay participantes"); return; }
         let excelData = [];
-        
-        // Encabezados: información del partido + cada participante
-        let headers = ['N°', 'GRUPO', 'LOCAL', 'VISITANTE', 'FECHA', 'HORA', 'MARCADOR REAL (LLENAR)'];
-        for(let p of participantes) {
-            headers.push(`${p.nombre.toUpperCase()} - PRONÓSTICO`);
-            headers.push(`${p.nombre.toUpperCase()} - PTS (MANUAL)`);
-        }
+        let headers = ['N°', 'GRUPO', 'LOCAL', 'VISITANTE', 'FECHA', 'HORA', 'RESULTADO REAL'];
+        for(let p of participantes) headers.push(`${p.nombre.toUpperCase()} - PRONÓSTICO`, `${p.nombre.toUpperCase()} - PUNTOS`);
         excelData.push(headers);
-        
-        // Datos de cada partido
         for(let i = 0; i < partidos.length; i++) {
             const m = partidos[i];
             const fechaStr = formatFechaExcel(m.fechaHora);
             const horaStr = formatHoraExcel(m.fechaHora);
-            
-            let row = [m.no, m.grupo, m.local, m.visitante, fechaStr, horaStr, '___ : ___'];
-            
+            const resultadoReal = (m.real.local !== null && m.real.visitante !== null) ? `${m.real.local} : ${m.real.visitante}` : '___ : ___';
+            let row = [m.no, m.grupo, m.local, m.visitante, fechaStr, horaStr, resultadoReal];
             for(let p of participantes) {
                 const pron = p.pronosticos[i] || {local: null, visitante: null};
-                const pronosticoStr = (pron.local !== null && pron.visitante !== null) 
-                    ? `${pron.local} : ${pron.visitante}` 
-                    : '___ : ___';
-                row.push(pronosticoStr);
-                row.push(''); // Espacio para puntos manuales
+                const pronosticoStr = (pron.local !== null && pron.visitante !== null) ? `${pron.local} : ${pron.visitante}` : '___ : ___';
+                const puntos = calcularPuntos(pron, m.real);
+                row.push(pronosticoStr, puntos);
             }
             excelData.push(row);
         }
-        
-        // Fila de totales
         let totalRow = ['', '', '', '', '', '', 'TOTAL PUNTOS:'];
-        for(let p of participantes) {
-            totalRow.push('');
-            totalRow.push(p.puntos);
-        }
+        for(let p of participantes) totalRow.push('', p.puntos);
         excelData.push(totalRow);
-        
-        // Hoja de instrucciones
-        let instruccionesData = [
-            ['📋 INSTRUCCIONES PARA EL CONTROL MANUAL DE LA QUINIELA'],
-            [''],
-            ['1. COMPLETAR MARCADOR REAL:', 'Después de cada partido, anota el resultado real en la columna "MARCADOR REAL" (ejemplo: 2:1)'],
-            ['2. CALCULAR PUNTOS:', 'En la columna "PTS (MANUAL)" de cada participante, anota los puntos que obtuvo:'],
-            ['   • 3 PUNTOS:', 'Si acertó EXACTAMENTE el marcador'],
-            ['   • 1 PUNTO:', 'Si acertó quién ganó o el empate, pero no el marcador exacto'],
-            ['   • 0 PUNTOS:', 'Si no acertó ni el ganador ni el empate'],
-            ['3. SISTEMA DE PUNTUACIÓN:', ''],
-            ['   - Acierto exacto (Ej: pronóstico 2:1 y real 2:1) = 3 puntos'],
-            ['   - Acierto de resultado (ganador/empate) = 1 punto'],
-            ['   - Fallo total = 0 puntos'],
-            ['4. AL FINAL:', 'Suma todos los puntos de cada participante para ver la clasificación final'],
-            [''],
-            ['¡SUERTE A TODOS! 🏆⚽']
-        ];
-        
         const wsDatos = XLSX.utils.aoa_to_sheet(excelData);
-        const wsInstrucciones = XLSX.utils.aoa_to_sheet(instruccionesData);
-        
-        // Ajustar anchos
-        let cols = [{wch:5}, {wch:6}, {wch:22}, {wch:22}, {wch:12}, {wch:8}, {wch:20}];
-        for(let i = 0; i < participantes.length; i++) {
-            cols.push({wch:22});
-            cols.push({wch:15});
-        }
+        let cols = [{wch:5}, {wch:6}, {wch:22}, {wch:22}, {wch:12}, {wch:8}, {wch:15}];
+        for(let i = 0; i < participantes.length; i++) cols.push({wch:22}, {wch:10});
         wsDatos['!cols'] = cols;
-        
-        // Formato a encabezados
-        const range = XLSX.utils.decode_range(wsDatos['!ref']);
-        for(let C = range.s.c; C <= range.e.c; ++C) {
-            const address = XLSX.utils.encode_cell({r:0, c:C});
-            if(!wsDatos[address]) continue;
-            wsDatos[address].s = { 
-                font: { bold: true, sz: 10, color: { rgb: "FFFFFF" } }, 
-                fill: { fgColor: { rgb: "1F7B4D" } },
-                alignment: { horizontal: "center", wrapText: true }
-            };
-        }
-        
-        wsInstrucciones['!cols'] = [{wch:30}, {wch:55}];
-        
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, wsDatos, "CONTROL_COMPLETO");
-        XLSX.utils.book_append_sheet(wb, wsInstrucciones, "INSTRUCCIONES");
-        
-        const fileName = `CONTROL_QUINIELA_MUNDIAL_2026_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`;
-        XLSX.writeFile(wb, fileName);
+        XLSX.utils.book_append_sheet(wb, wsDatos, "QUINIELA_COMPLETA");
+        XLSX.writeFile(wb, `QUINIELA_FAMILIAR_SNISP_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`);
     }
     
-    // IMPRESIÓN DE CÉDULAS (SIN MODIFICAR)
     function printCedulas(){
         if(participantes.length === 0){ alert("No hay participantes"); return; }
         let win = window.open('', '_blank');
-        let html = `<!DOCTYPE html><html><head><title>Cédulas Mundial 2026 - 72 Partidos (2 páginas por participante)</title>
+        let html = `<!DOCTYPE html><html><head><title>QUINIELA FAMILIAR SNISP - Mundial 2026</title>
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: 'Segoe UI', 'Courier New', monospace; background: white; }
+            body { font-family: 'Segoe UI', monospace; background: white; }
             .page { page-break-after: always; padding: 18px 16px; }
-            h2 { color: #0e4727; font-size: 18px; margin-bottom: 8px; text-align: center; border-bottom: 2px solid #ffcd4a; padding-bottom: 5px; }
+            h2 { color: #0e4727; font-size: 18px; text-align: center; border-bottom: 2px solid #ffcd4a; padding-bottom: 5px; }
             .subheader { text-align: center; font-size: 10px; margin-bottom: 12px; font-weight: bold; }
-            table { width: 100%; border-collapse: collapse; font-size: 9.5px; }
-            th { background: #f5e6c4; border: 1px solid #999; padding: 6px 3px; font-weight: 800; text-align: center; }
-            td { border: 1px solid #aaa; padding: 5px 3px; vertical-align: top; font-size: 9px; }
-            .team-cell { font-weight: 600; }
-            .result-cell, .pronostico-cell, .pts-cell { text-align: center; }
-            .pts-cell { background: #fffef5; }
-            .footer-note { margin-top: 10px; font-size: 8px; text-align: center; color: #555; }
-            @media print {
-                body { margin: 0; padding: 0; }
-                .page { page-break-after: always; }
-            }
-        </style>
-        </head><body>`;
-        
+            table { width: 100%; border-collapse: collapse; font-size: 9px; }
+            th { background: #f5e6c4; border: 1px solid #999; padding: 5px; }
+            td { border: 1px solid #aaa; padding: 5px; }
+            .footer-note { margin-top: 10px; font-size: 8px; text-align: center; }
+            @media print { .page { page-break-after: always; } }
+        </style></head><body>`;
         for(let p of participantes){
-            html += `<div class="page">
-                <h2>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 - ${p.nombre.toUpperCase()} 🏆</h2>
-                <div class="subheader">📄 PÁGINA 1 DE 2 | PARTIDOS 1 AL 36 | MARCADOR REAL Y PUNTOS (LLENAR A MANO)</div>
-                <table><thead><tr><th>#</th><th>GRUPO</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA</th><th>PRONÓSTICO</th><th>MARCADOR REAL</th><th>PTS</th></tr></thead><tbody>`;
+            html += `<div class="page"><h2>🏆 QUINIELA FAMILIAR SNISP - ${p.nombre.toUpperCase()} 🏆</h2><div class="subheader">PARTIDOS 1 AL 36</div><table><thead><tr><th>#</th><th>G</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA</th><th>PRONÓSTICO</th><th>REAL</th><th>PTS</th></tr></thead><tbody>`;
             for(let i=0; i<36; i++){
                 const m = partidos[i];
-                const pron = p.pronosticos[i] || { local: null, visitante: null };
-                const pronTxt = (pron.local !== null && pron.visitante !== null) ? `${pron.local} : ${pron.visitante}` : "___ : ___";
-                html += `<tr>
-                    <td style="text-align:center;">${m.no}</td>
-                    <td style="text-align:center;">${m.grupo}</td>
-                    <td class="team-cell">${getTeamText(m.local)}</td>
-                    <td class="team-cell">${getTeamText(m.visitante)}</td>
-                    <td style="font-size:8px;">${formatFechaShort(m.fechaHora)}</td>
-                    <td class="pronostico-cell">${pronTxt}</td>
-                    <td class="result-cell">_____ : _____</td>
-                    <td class="pts-cell">______</td>
-                	</tr>`;
+                const pron = p.pronosticos[i] || {};
+                const pronTxt = (pron.local!==null && pron.visitante!==null) ? `${pron.local}:${pron.visitante}` : "___:___";
+                const realTxt = (m.real.local!==null && m.real.visitante!==null) ? `${m.real.local}:${m.real.visitante}` : "___:___";
+                const pts = calcularPuntos(pron, m.real);
+                html += `<tr><td>${m.no}</td><td>${m.grupo}</td><td>${getTeamText(m.local)}</td><td>${getTeamText(m.visitante)}</td><td>${formatFechaShort(m.fechaHora)}</td><td>${pronTxt}</td><td>${realTxt}</td><td>${pts}</td></tr>`;
             }
-            html += `</tbody></table><div class="footer-note">⚽ Continúa en la página siguiente (partidos 37 al 72) ⚽</div></div>`;
+            html += `</tbody></table><div class="footer-note">PÁGINA 1 DE 2</div></div>`;
             
-            html += `<div class="page">
-                <h2>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 - ${p.nombre.toUpperCase()} 🏆</h2>
-                <div class="subheader">📄 PÁGINA 2 DE 2 | PARTIDOS 37 AL 72 | MARCADOR REAL Y PUNTOS (LLENAR A MANO)</div>
-                <table><thead><tr><th>#</th><th>GRUPO</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA</th><th>PRONÓSTICO</th><th>MARCADOR REAL</th><th>PTS</th></tr></thead><tbody>`;
+            html += `<div class="page"><h2>🏆 QUINIELA FAMILIAR SNISP - ${p.nombre.toUpperCase()} 🏆</h2><div class="subheader">PARTIDOS 37 AL 72</div><table><thead><tr><th>#</th><th>G</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA</th><th>PRONÓSTICO</th><th>REAL</th><th>PTS</th></tr></thead><tbody>`;
             for(let i=36; i<72; i++){
                 const m = partidos[i];
-                const pron = p.pronosticos[i] || { local: null, visitante: null };
-                const pronTxt = (pron.local !== null && pron.visitante !== null) ? `${pron.local} : ${pron.visitante}` : "___ : ___";
-                html += `<tr>
-                    <td style="text-align:center;">${m.no}</td>
-                    <td style="text-align:center;">${m.grupo}</td>
-                    <td class="team-cell">${getTeamText(m.local)}</td>
-                    <td class="team-cell">${getTeamText(m.visitante)}</td>
-                    <td style="font-size:8px;">${formatFechaShort(m.fechaHora)}</td>
-                    <td class="pronostico-cell">${pronTxt}</td>
-                    <td class="result-cell">_____ : _____</td>
-                    <td class="pts-cell">______</td>
-                	</tr>`;
+                const pron = p.pronosticos[i] || {};
+                const pronTxt = (pron.local!==null && pron.visitante!==null) ? `${pron.local}:${pron.visitante}` : "___:___";
+                const realTxt = (m.real.local!==null && m.real.visitante!==null) ? `${m.real.local}:${m.real.visitante}` : "___:___";
+                const pts = calcularPuntos(pron, m.real);
+                html += `<tr><td>${m.no}</td><td>${m.grupo}</td><td>${getTeamText(m.local)}</td><td>${getTeamText(m.visitante)}</td><td>${formatFechaShort(m.fechaHora)}</td><td>${pronTxt}</td><td>${realTxt}</td><td>${pts}</td></tr>`;
             }
-            html += `</tbody></table><div class="footer-note">⚽ 72 PARTIDOS FASE DE GRUPOS MUNDIAL MÉXICO 2026 | LLENE MARCADOR REAL Y CALCULE SUS PUNTOS ⚽</div></div>`;
+            html += `</tbody></table><div class="footer-note">TOTAL PUNTOS: ${p.puntos} | PÁGINA 2 DE 2</div></div>`;
         }
         html += `</body></html>`;
         win.document.write(html);
@@ -894,7 +960,53 @@
         win.print();
     }
     
-    document.getElementById('saveResultsBtn')?.addEventListener('click', saveResults);
+    function openResetModal(){
+        selectedResetOption = null;
+        document.querySelectorAll('.reset-option').forEach(opt => opt.classList.remove('selected'));
+        document.getElementById('resetModal').style.display = 'flex';
+    }
+    
+    function confirmReset(){
+        if(!selectedResetOption){
+            alert("Selecciona una opción de reinicio");
+            return;
+        }
+        document.getElementById('resetModal').style.display = 'none';
+        if(selectedResetOption === 'results') resetResultsOnly();
+        else if(selectedResetOption === 'participants') resetParticipantsOnly();
+        else if(selectedResetOption === 'calendar') resetCalendarOnly();
+        else if(selectedResetOption === 'all') resetEverything();
+    }
+    
+    function load(){
+        const saved = localStorage.getItem('QM2026_FINAL_72');
+        if(saved){
+            try{
+                const data = JSON.parse(saved);
+                if(data.partidos) partidos = data.partidos;
+                if(data.participantes) participantes = data.participantes;
+                if(data.nextId) nextId = data.nextId;
+                participantes.forEach(p => { if(!p.pronosticos || p.pronosticos.length!==72) p.pronosticos = partidos.map(()=>({local:null,visitante:null})); });
+            }catch(e){ setDefault(); }
+        } else { setDefault(); }
+        recalcAll();
+        renderMatchesTable();
+        renderParticipants();
+        renderGeneralRanking();
+    }
+    
+    function setDefault(){
+        partidos = partidosDataOriginal.map(p => ({ ...p, real: { local: null, visitante: null } }));
+        participantes = [];
+        nextId = 1;
+        let empty = partidos.map(()=>({local:null,visitante:null}));
+        participantes.push({id:nextId++, nombre:"ANDRÉS G.", pronosticos:JSON.parse(JSON.stringify(empty)), puntos:0});
+        participantes.push({id:nextId++, nombre:"MARTINA K.", pronosticos:JSON.parse(JSON.stringify(empty)), puntos:0});
+        participantes.push({id:nextId++, nombre:"CARLOS V.", pronosticos:JSON.parse(JSON.stringify(empty)), puntos:0});
+        store();
+    }
+    
+    // Event Listeners
     document.getElementById('editMatchesBtn')?.addEventListener('click', openEditModal);
     document.getElementById('applyEditBtn')?.addEventListener('click', applyEdits);
     document.getElementById('closeEditModal')?.addEventListener('click', () => document.getElementById('editModal').style.display = 'none');
@@ -902,11 +1014,26 @@
     document.getElementById('importCsvBtn')?.addEventListener('click', importCSV);
     document.getElementById('printCedulasBtn')?.addEventListener('click', printCedulas);
     document.getElementById('exportExcelBtn')?.addEventListener('click', exportToExcel);
-    document.getElementById('resetAllBtn')?.addEventListener('click', resetAll);
-    document.getElementById('savePronosBtn')?.addEventListener('click', savePronos);
+    document.getElementById('resetOptionsBtn')?.addEventListener('click', openResetModal);
+    document.getElementById('cancelResetBtn')?.addEventListener('click', () => document.getElementById('resetModal').style.display = 'none');
+    document.getElementById('confirmResetBtn')?.addEventListener('click', confirmReset);
     document.getElementById('closePronosModal')?.addEventListener('click', () => document.getElementById('pronosModal').style.display = 'none');
     document.getElementById('cancelPronosBtn')?.addEventListener('click', () => document.getElementById('pronosModal').style.display = 'none');
-    window.onclick = (e) => { if(e.target === document.getElementById('pronosModal')) document.getElementById('pronosModal').style.display = 'none'; if(e.target === document.getElementById('editModal')) document.getElementById('editModal').style.display = 'none'; };
+    
+    document.querySelectorAll('.reset-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            document.querySelectorAll('.reset-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            selectedResetOption = opt.dataset.reset;
+        });
+    });
+    
+    window.onclick = (e) => { 
+        if(e.target === document.getElementById('pronosModal')) document.getElementById('pronosModal').style.display = 'none'; 
+        if(e.target === document.getElementById('editModal')) document.getElementById('editModal').style.display = 'none';
+        if(e.target === document.getElementById('resetModal')) document.getElementById('resetModal').style.display = 'none';
+    };
+    
     load();
 </script>
 </body>
