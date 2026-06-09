@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>QUINIELA FAMILIAR SNISP | MUNDIAL 2026 | 21 PARTICIPANTES | 72 PARTIDOS</title>
+    <title>QUINIELA FAMILIAR SNISP | MUNDIAL 2026 | 24 PARTICIPANTES | 72 PARTIDOS</title>
     <style>
         * {
             margin: 0;
@@ -268,9 +268,30 @@
             font-weight: 600;
             font-size: 0.8rem;
         }
-        .rank-1 { background: #fff3cf; }
-        .rank-2 { background: #f5f5ea; }
-        .rank-3 { background: #efe8d6; }
+        
+        /* Estilos para la tabla general con colores de pago */
+        .general-ranking .pagado-row {
+            background-color: #d4edda !important;
+            border-left: 4px solid #28a745;
+        }
+        
+        .general-ranking .pendiente-row {
+            background-color: #f8d7da !important;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .general-ranking .rank-1 { background: #fff3cf; }
+        .general-ranking .rank-2 { background: #f5f5ea; }
+        .general-ranking .rank-3 { background: #efe8d6; }
+        
+        /* Para mantener las medallas aunque tengan color de pago */
+        .general-ranking .pagado-row.rank-1, 
+        .general-ranking .pendiente-row.rank-1 { background: #fff3cf !important; }
+        .general-ranking .pagado-row.rank-2, 
+        .general-ranking .pendiente-row.rank-2 { background: #f5f5ea !important; }
+        .general-ranking .pagado-row.rank-3, 
+        .general-ranking .pendiente-row.rank-3 { background: #efe8d6 !important; }
+        
         .puntos-destacados {
             font-weight: 800;
             color: #e68a2e;
@@ -510,6 +531,11 @@
             pointer-events: none;
             z-index: 1000;
         }
+        
+        .estado-pago-icono {
+            font-size: 1.1rem;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
@@ -536,7 +562,7 @@
                 <div class="matches-scroll">
                     <table class="matches-table">
                         <thead>
-                            <tr><th>#</th><th>GRUPO</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA/HORA</th><th>MARCADOR REAL</th><th></th></tr>
+                            <tr><th>#</th><th>GRUPO</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA/HORA</th><th>MARCADOR REAL</th><th></th><tr>
                         </thead>
                         <tbody id="matchesTableBody"></tbody>
                     </table>
@@ -549,9 +575,16 @@
 
         <div>
             <div class="card">
-                <div class="card-header"><h2>🏅 TABLA GENERAL</h2><span class="badge-72">EN VIVO</span></div>
+                <div class="card-header">
+                    <h2>🏅 TABLA GENERAL</h2>
+                    <span class="badge-72">💰 COLOR POR PAGO</span>
+                </div>
+                <div style="margin-bottom: 10px; font-size: 0.65rem; display: flex; gap: 15px; justify-content: center;">
+                    <span style="background: #d4edda; padding: 2px 8px; border-radius: 20px;">🟢 Pagado</span>
+                    <span style="background: #f8d7da; padding: 2px 8px; border-radius: 20px;">🔴 Pendiente</span>
+                </div>
                 <table class="general-ranking" id="generalRankingTable">
-                    <thead><tr><th>POS</th><th>PARTICIPANTE</th><th>PUNTOS</th></tr></thead>
+                    <thead><tr><th>POS</th><th>PARTICIPANTE</th><th>PUNTOS</th><th>PAGO</th></tr></thead>
                     <tbody id="generalRankingBody"></tbody>
                 </table>
             </div>
@@ -566,7 +599,7 @@
                 <div class="footer-note" style="margin-top: 8px;">⭐ ESTADO: ✅ COMPLETO | ⚠️ PENDIENTE | <span id="totalCountDisplay">Total: 0 participantes</span></div>
             </div>
 
-            <!-- NUEVO MÓDULO DE CONTROL DE PAGOS CON COLORES -->
+            <!-- MÓDULO DE CONTROL DE PAGOS CON COLORES -->
             <div class="card">
                 <div class="card-header">
                     <h2>💰 CONTROL DE PAGOS</h2>
@@ -630,7 +663,7 @@
             <div class="reset-option" data-reset="all">
                 <h4>⚠️ TODO (REINICIO COMPLETO)</h4>
                 <p>Reinicia absolutamente todo: resultados, participantes, pronósticos, pagos y calendario.</p>
-                <span class="badge">Vuelve al estado inicial con los 21 participantes originales</span>
+                <span class="badge">Vuelve al estado inicial con los 24 participantes originales</span>
             </div>
         </div>
         <div class="modal-buttons">
@@ -699,10 +732,11 @@
     let updateTimeout = null;
     let selectedResetOption = null;
 
+    // LISTA ACTUALIZADA CON 24 PARTICIPANTES (21 originales + 3 nuevos)
     const participantesBase = [
         "MARCOS", "WILLY", "VIOLE", "ELSY", "ANGELICA", "NELLY", "GINA", "ALFREDO", "LUIS", 
         "OMAR", "MIGUELON", "ADAI", "AARON", "CHARLY", "JEANETH", "TERE", "HAZIEL", "JESSICA", 
-        "ROSI", "VICTOR", "CHINO 1"
+        "ROSI", "VICTOR", "CHINO 1", "ERIKA ANABEL", "HABIBI", "ANEL"
     ];
 
     function formatFecha(fh) { if(!fh) return ""; let d=new Date(fh); return d.toLocaleDateString('es-ES') + " " + d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
@@ -723,7 +757,7 @@
     }
     
     function store() { 
-        localStorage.setItem('QM2026_FINAL_72_V4_PAGOS', JSON.stringify({ partidos, participantes, nextId }));
+        localStorage.setItem('QM2026_FINAL_72_V5_PAGOS_24', JSON.stringify({ partidos, participantes, nextId }));
         showSavingIndicator();
         updateParticipantCounter();
         renderPaymentsList();
@@ -756,7 +790,7 @@
         const tbody = document.getElementById('generalRankingBody');
         tbody.innerHTML = '';
         if (sorted.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">❌ Sin participantes</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">❌ Sin participantes</td></tr>';
             return;
         }
         let position = 1;
@@ -769,7 +803,16 @@
                 const p = sorted[i + j];
                 let rankClass = position === 1 ? 'rank-1' : (position === 2 ? 'rank-2' : (position === 3 ? 'rank-3' : ''));
                 let medalEmoji = position === 1 ? '🥇 ' : (position === 2 ? '🥈 ' : (position === 3 ? '🥉 ' : ''));
-                tbody.innerHTML += `<tr class="${rankClass}"><td style="text-align:center; font-weight:bold;">${position} ${medalEmoji}</td><td><strong>${p.nombre.toUpperCase()}</strong></td><td class="puntos-destacados">${p.puntos}</td></tr>`;
+                // Aplicar clase según estado de pago (respetando medallas)
+                let paymentClass = p.pagado ? 'pagado-row' : 'pendiente-row';
+                let pagoIcono = p.pagado ? '🟢' : '🔴';
+                let pagoTexto = p.pagado ? 'Pagado' : 'Pendiente';
+                tbody.innerHTML += `<tr class="${rankClass} ${paymentClass}">
+                    <td style="text-align:center; font-weight:bold;">${position} ${medalEmoji}</td>
+                    <td><strong>${p.nombre.toUpperCase()}</strong></td>
+                    <td class="puntos-destacados">${p.puntos}</td>
+                    <td style="text-align:center;">${pagoIcono} ${pagoTexto}</td>
+                </tr>`;
             }
             i += countSamePoints;
             position += countSamePoints;
@@ -840,6 +883,7 @@
                     store();
                     renderPaymentsList();
                     renderParticipants();
+                    renderGeneralRanking();
                 }
             });
         });
@@ -867,6 +911,7 @@
         store();
         renderPaymentsList();
         renderParticipants();
+        renderGeneralRanking();
         alert("✅ Estados de pago reiniciados (todos pendientes).");
     }
     
@@ -881,7 +926,7 @@
         store();
         recalcAll();
         renderMatchesTable();
-        alert("✅ Reinicio completo: 21 participantes originales cargados.");
+        alert("✅ Reinicio completo: 24 participantes originales cargados.");
     }
     
     function renderMatchesTable(){
@@ -1126,7 +1171,7 @@
     }
     
     function load(){
-        const saved = localStorage.getItem('QM2026_FINAL_72_V4_PAGOS');
+        const saved = localStorage.getItem('QM2026_FINAL_72_V5_PAGOS_24');
         if(saved){
             try{
                 const data = JSON.parse(saved);
