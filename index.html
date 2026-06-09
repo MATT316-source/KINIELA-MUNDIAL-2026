@@ -85,6 +85,12 @@
         
         .btn-excel { background: #1F7B4D; color: white; }
         .btn-excel:hover { background: #2a9d64; transform: translateY(-2px); }
+        
+        .btn-pago-pagado { background: #1e7e34; color: white; }
+        .btn-pago-pagado:hover { background: #28a745; }
+        
+        .btn-pago-pendiente { background: #dc3545; color: white; }
+        .btn-pago-pendiente:hover { background: #c82333; }
 
         .two-columns {
             display: grid;
@@ -130,6 +136,35 @@
             border-radius: 40px;
             font-size: 0.7rem;
             font-weight: 800;
+        }
+        
+        .payment-summary {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .payment-count {
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 30px;
+        }
+        
+        .payment-count.pagado {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .payment-count.pendiente {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         .matches-scroll {
@@ -244,44 +279,68 @@
         }
 
         .participant-item {
-            background: #f9f9ef;
             border-radius: 40px;
-            padding: 5px 12px;
-            margin-bottom: 6px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 8px;
             font-weight: 600;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             border: 1px solid #e2ecd9;
+            transition: all 0.2s;
         }
+        
+        /* Estados de pago con colores */
+        .participant-item.pagado-status {
+            background: #d4edda;
+            border-left: 6px solid #28a745;
+        }
+        
+        .participant-item.pendiente-status {
+            background: #f8d7da;
+            border-left: 6px solid #dc3545;
+        }
+        
         .participant-status {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background: #e8e8dc;
-            padding: 2px 8px;
+            padding: 4px 12px;
             border-radius: 30px;
-            font-size: 0.62rem;
+            font-size: 0.7rem;
             font-weight: 700;
             white-space: nowrap;
         }
-        .status-complete { background: #c8e6d9; color: #1e6e3e; }
-        .status-pending { background: #fff0cc; color: #c97e00; }
+        
+        .participant-status.pagado {
+            background: #28a745;
+            color: white;
+        }
+        
+        .participant-status.pendiente {
+            background: #dc3545;
+            color: white;
+        }
         
         .participant-item button {
-            padding: 3px 8px;
-            font-size: 0.65rem;
+            padding: 4px 12px;
+            font-size: 0.7rem;
             border-radius: 30px;
             font-weight: bold;
             cursor: pointer;
             transition: 0.1s;
             border: none;
         }
+        
+        .btn-pago {
+            min-width: 90px;
+        }
+        
         .viewPronBtn { background: #2b8c54; color: white; }
-        .delPartBtn { background: #db3a4a; color: white; }
+        .delPartBtn { background: #6c757d; color: white; }
         .participant-item button:hover { opacity: 0.85; transform: scale(0.97);}
         
         #participantsList {
@@ -294,6 +353,17 @@
         #newPlayerName {
             font-size: 0.7rem;
             padding: 7px 12px;
+        }
+        
+        .counter-text {
+            font-size: 0.7rem;
+            background: #e8f0e4;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #1e6e3e;
+            margin-left: 8px;
         }
         
         .modal {
@@ -446,7 +516,7 @@
 <div class="app-container">
     <div class="worldcup-header">
         <div class="title-section">
-            <h1>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 🏆<br><span style="font-size: 0.7rem;">21 PARTICIPANTES · 72 PARTIDOS OFICIALES FASE DE GRUPOS</span></h1>
+            <h1>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 🏆<br><span style="font-size: 0.7rem;">PARTICIPANTES DINÁMICOS · 72 PARTIDOS OFICIALES FASE DE GRUPOS</span></h1>
             <p>📋 CONTROL EXCEL: NO. | GRUPO | SELECCIÓN VS SELECCIÓN | FECHA Y HORA</p>
         </div>
         <div class="btn-group">
@@ -487,13 +557,29 @@
             </div>
 
             <div class="card">
-                <div class="card-header"><h2>👥 PARTICIPANTES (21)</h2></div>
-                <div style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;">
+                <div class="card-header"><h2>👥 PARTICIPANTES</h2><span id="participantCounterBadge" class="badge-72">0</span></div>
+                <div style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
                     <input type="text" id="newPlayerName" placeholder="NOMBRE EJ: JAVIER" style="flex:1; border-radius: 60px; border: 1px solid #1e6e3e; font-weight: bold; text-transform: uppercase;">
                     <button id="addPlayerBtn" class="btn btn-secondary">➕ AGREGAR</button>
                 </div>
                 <div id="participantsList"></div>
-                <div class="footer-note" style="margin-top: 8px;">⭐ ESTADO: ✅ COMPLETO | ⚠️ PENDIENTE</div>
+                <div class="footer-note" style="margin-top: 8px;">⭐ ESTADO: ✅ COMPLETO | ⚠️ PENDIENTE | <span id="totalCountDisplay">Total: 0 participantes</span></div>
+            </div>
+
+            <!-- NUEVO MÓDULO DE CONTROL DE PAGOS CON COLORES -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>💰 CONTROL DE PAGOS</h2>
+                    <span class="badge-72">💰 ESTADO FINANCIERO</span>
+                </div>
+                <div class="payment-summary">
+                    <span class="payment-count pagado" id="pagadosCount">✅ Pagados: 0</span>
+                    <span class="payment-count pendiente" id="pendientesCount">❌ Pendientes: 0</span>
+                </div>
+                <div id="paymentsList" style="max-height: 250px; overflow-y: auto;"></div>
+                <div class="footer-note" style="margin-top: 10px; background: #fff3cd;">
+                    💡 Verde = Pagado | Rojo = Pendiente | Haz clic en el botón para cambiar el estado
+                </div>
             </div>
 
             <div class="card">
@@ -507,7 +593,7 @@
             </div>
         </div>
     </div>
-    <div class="footer-note">⚽ ACTUALIZACIÓN EN TIEMPO REAL · PUNTOS AUTOMÁTICOS · 21 PARTICIPANTES ACTIVOS ⚽</div>
+    <div class="footer-note">⚽ ACTUALIZACIÓN EN TIEMPO REAL · PUNTOS AUTOMÁTICOS · CONTROL DE PAGOS CON COLORES ⚽</div>
 </div>
 
 <div id="savingIndicator" class="saving-indicator">💾 ACTUALIZANDO...</div>
@@ -536,10 +622,15 @@
                 <p>Restaura el calendario original (72 partidos). ¡Cuidado! Esto sobrescribe cualquier edición.</p>
                 <span class="badge">Respalda tus cambios antes</span>
             </div>
+            <div class="reset-option" data-reset="payments">
+                <h4>💰 SOLO PAGOS</h4>
+                <p>Reinicia únicamente el estado de pagos de todos los participantes (todos quedarán como PENDIENTE).</p>
+                <span class="badge">Mantiene participantes y resultados</span>
+            </div>
             <div class="reset-option" data-reset="all">
                 <h4>⚠️ TODO (REINICIO COMPLETO)</h4>
-                <p>Reinicia absolutamente todo: resultados, participantes, pronósticos y calendario.</p>
-                <span class="badge">Vuelve al estado inicial con 21 participantes</span>
+                <p>Reinicia absolutamente todo: resultados, participantes, pronósticos, pagos y calendario.</p>
+                <span class="badge">Vuelve al estado inicial con los 21 participantes originales</span>
             </div>
         </div>
         <div class="modal-buttons">
@@ -551,7 +642,6 @@
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script>
-    // Mapa de banderas extendido
     const flagMap = {
         "MÉXICO":"🇲🇽","SUDÁFRICA":"🇿🇦","COREA DEL SUR":"🇰🇷","REPUBLICA CHECA":"🇨🇿","CANADÁ":"🇨🇦","BOSNIA Y HERZEGOVINA":"🇧🇦","QATAR":"🇶🇦","SUIZA":"🇨🇭",
         "ESTADOS UNIDOS":"🇺🇸","PARAGUAY":"🇵🇾","BRASIL":"🇧🇷","MARRUECOS":"🇲🇦","HAITÍ":"🇭🇹","ESCOCIA":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","AUSTRALIA":"🇦🇺","TURQUÍA":"🇹🇷",
@@ -609,7 +699,6 @@
     let updateTimeout = null;
     let selectedResetOption = null;
 
-    // 21 participantes oficiales según imagen
     const participantesBase = [
         "MARCOS", "WILLY", "VIOLE", "ELSY", "ANGELICA", "NELLY", "GINA", "ALFREDO", "LUIS", 
         "OMAR", "MIGUELON", "ADAI", "AARON", "CHARLY", "JEANETH", "TERE", "HAZIEL", "JESSICA", 
@@ -627,9 +716,17 @@
         setTimeout(() => { indicator.style.opacity = '0'; }, 500);
     }
     
+    function updateParticipantCounter() {
+        const total = participantes.length;
+        document.getElementById('participantCounterBadge').innerText = total;
+        document.getElementById('totalCountDisplay').innerHTML = `Total: ${total} participante${total !== 1 ? 's' : ''}`;
+    }
+    
     function store() { 
-        localStorage.setItem('QM2026_FINAL_72_V2', JSON.stringify({ partidos, participantes, nextId }));
+        localStorage.setItem('QM2026_FINAL_72_V4_PAGOS', JSON.stringify({ partidos, participantes, nextId }));
         showSavingIndicator();
+        updateParticipantCounter();
+        renderPaymentsList();
     }
     
     function calcularPuntos(pronostico, resultadoReal) {
@@ -646,10 +743,12 @@
             let puntos = 0;
             for (let i=0; i<partidos.length; i++) puntos += calcularPuntos(p.pronosticos[i], partidos[i].real);
             p.puntos = puntos;
+            if (p.pagado === undefined) p.pagado = false;
         }
         store();
         renderGeneralRanking();
         renderParticipants();
+        renderPaymentsList();
     }
     
     function renderGeneralRanking() {
@@ -681,13 +780,14 @@
         let cont = document.getElementById('participantsList');
         cont.innerHTML = '';
         participantes.forEach(p => {
+            if (p.pagado === undefined) p.pagado = false;
             let completos = p.pronosticos.filter(pr => pr.local !== null && pr.visitante !== null).length;
             let estado = completos === 72 ? '✅ COMPLETO' : `⚠️ PENDIENTE (${completos}/72)`;
             let div = document.createElement('div');
-            div.className = 'participant-item';
+            div.className = `participant-item ${p.pagado ? 'pagado-status' : 'pendiente-status'}`;
             div.innerHTML = `<span><strong>${p.nombre.toUpperCase()}</strong> (${p.puntos} PTS)</span>
                 <div style="display:flex; gap: 5px; align-items: center;">
-                    <span class="participant-status ${completos===72?'status-complete':'status-pending'}">${estado}</span>
+                    <span class="participant-status ${completos===72?'pagado':'pendiente'}">${estado}</span>
                     <button class="viewPronBtn" data-id="${p.id}">📋 VER BOLETA</button>
                     <button class="delPartBtn" data-id="${p.id}">🗑️</button>
                 </div>`;
@@ -695,6 +795,54 @@
         });
         document.querySelectorAll('.viewPronBtn').forEach(btn=>btn.addEventListener('click',()=>openPronModal(parseInt(btn.dataset.id))));
         document.querySelectorAll('.delPartBtn').forEach(btn=>btn.addEventListener('click',()=>{ if(confirm('¿Eliminar este participante?')){ participantes=participantes.filter(p=>p.id!==parseInt(btn.dataset.id)); store(); recalcAll(); renderParticipants(); renderGeneralRanking(); } }));
+        updateParticipantCounter();
+    }
+    
+    function renderPaymentsList() {
+        const container = document.getElementById('paymentsList');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        let pagados = 0;
+        let pendientes = 0;
+        
+        participantes.forEach(p => {
+            if (p.pagado === undefined) p.pagado = false;
+            if (p.pagado) pagados++;
+            else pendientes++;
+            
+            const div = document.createElement('div');
+            div.className = `participant-item ${p.pagado ? 'pagado-status' : 'pendiente-status'}`;
+            div.style.marginBottom = '8px';
+            div.innerHTML = `
+                <span><strong>${p.nombre.toUpperCase()}</strong></span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="participant-status ${p.pagado ? 'pagado' : 'pendiente'}">
+                        ${p.pagado ? '✅ PAGADO' : '❌ PENDIENTE'}
+                    </span>
+                    <button class="togglePagoBtn btn-pago ${p.pagado ? 'btn-pago-pagado' : 'btn-pago-pendiente'}" data-id="${p.id}">
+                        ${p.pagado ? '💰 MARCAR PENDIENTE' : '💸 MARCAR PAGADO'}
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        
+        document.getElementById('pagadosCount').innerHTML = `✅ Pagados: ${pagados}`;
+        document.getElementById('pendientesCount').innerHTML = `❌ Pendientes: ${pendientes}`;
+        
+        document.querySelectorAll('.togglePagoBtn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = parseInt(btn.dataset.id);
+                const participante = participantes.find(p => p.id === id);
+                if (participante) {
+                    participante.pagado = !participante.pagado;
+                    store();
+                    renderPaymentsList();
+                    renderParticipants();
+                }
+            });
+        });
     }
     
     function resetResultsOnly() {
@@ -714,13 +862,21 @@
         alert("✅ Calendario restaurado.");
     }
     
+    function resetPaymentsOnly() {
+        participantes.forEach(p => p.pagado = false);
+        store();
+        renderPaymentsList();
+        renderParticipants();
+        alert("✅ Estados de pago reiniciados (todos pendientes).");
+    }
+    
     function resetEverything() {
         partidos = partidosDataOriginal.map(p => ({ ...p, real: { local: null, visitante: null } }));
         const emptyPronos = partidos.map(()=>({local:null,visitante:null}));
         participantes = [];
         nextId = 1;
         participantesBase.forEach(nombre => {
-            participantes.push({ id: nextId++, nombre: nombre, pronosticos: JSON.parse(JSON.stringify(emptyPronos)), puntos: 0 });
+            participantes.push({ id: nextId++, nombre: nombre, pronosticos: JSON.parse(JSON.stringify(emptyPronos)), puntos: 0, pagado: false });
         });
         store();
         recalcAll();
@@ -742,7 +898,7 @@
                 <td>${formatFecha(p.fechaHora)}</td>
                 <td><div class="score-input"><input type="number" class="realL-${idx}" value="${realL}" style="width:36px;" data-match="${idx}" data-team="local"> : <input type="number" class="realV-${idx}" value="${realV}" style="width:36px;" data-match="${idx}" data-team="visitante"></div></td>
                 <td>${(p.real.local!==null && p.real.visitante!==null)?'✅':'⚽'}</td>
-             </tr>`;
+              </tr>`;
         });
         for(let i = 0; i < partidos.length; i++) {
             const lInp = document.querySelector(`.realL-${i}`);
@@ -868,8 +1024,8 @@
         let name = document.getElementById('newPlayerName').value.trim().toUpperCase();
         if(!name) return alert("Ingrese nombre");
         let empty = partidos.map(()=>({local:null,visitante:null}));
-        participantes.push({id:nextId++, nombre:name, pronosticos:empty, puntos:0});
-        store(); recalcAll(); renderParticipants(); renderGeneralRanking();
+        participantes.push({id:nextId++, nombre:name, pronosticos:empty, puntos:0, pagado:false});
+        store(); recalcAll(); renderParticipants(); renderGeneralRanking(); renderPaymentsList();
         document.getElementById('newPlayerName').value='';
     }
     
@@ -901,8 +1057,8 @@
         for(let i = 0; i < participantes.length; i++) cols.push({wch:22}, {wch:10});
         wsDatos['!cols'] = cols;
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, wsDatos, "QUINIELA_21_PARTICIPANTES");
-        XLSX.writeFile(wb, `QUINIELA_SNISP_21_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`);
+        XLSX.utils.book_append_sheet(wb, wsDatos, "QUINIELA_COMPLETA");
+        XLSX.writeFile(wb, `QUINIELA_SNISP_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.xlsx`);
     }
     
     function printCedulas(){
@@ -965,24 +1121,30 @@
         if(selectedResetOption === 'results') resetResultsOnly();
         else if(selectedResetOption === 'participants') resetParticipantsOnly();
         else if(selectedResetOption === 'calendar') resetCalendarOnly();
+        else if(selectedResetOption === 'payments') resetPaymentsOnly();
         else if(selectedResetOption === 'all') resetEverything();
     }
     
     function load(){
-        const saved = localStorage.getItem('QM2026_FINAL_72_V2');
+        const saved = localStorage.getItem('QM2026_FINAL_72_V4_PAGOS');
         if(saved){
             try{
                 const data = JSON.parse(saved);
                 if(data.partidos) partidos = data.partidos;
                 if(data.participantes) participantes = data.participantes;
                 if(data.nextId) nextId = data.nextId;
-                participantes.forEach(p => { if(!p.pronosticos || p.pronosticos.length!==72) p.pronosticos = partidos.map(()=>({local:null,visitante:null})); });
+                participantes.forEach(p => { 
+                    if(!p.pronosticos || p.pronosticos.length!==72) p.pronosticos = partidos.map(()=>({local:null,visitante:null}));
+                    if(p.pagado === undefined) p.pagado = false;
+                });
             }catch(e){ setDefault(); }
         } else { setDefault(); }
         recalcAll();
         renderMatchesTable();
         renderParticipants();
         renderGeneralRanking();
+        renderPaymentsList();
+        updateParticipantCounter();
     }
     
     function setDefault(){
@@ -991,7 +1153,7 @@
         participantes = [];
         nextId = 1;
         participantesBase.forEach(nombre => {
-            participantes.push({ id: nextId++, nombre: nombre, pronosticos: JSON.parse(JSON.stringify(emptyPronos)), puntos: 0 });
+            participantes.push({ id: nextId++, nombre: nombre, pronosticos: JSON.parse(JSON.stringify(emptyPronos)), puntos: 0, pagado: false });
         });
         store();
     }
