@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>QUINIELA FAMILIAR SNISP | MUNDIAL 2026 | 31 PARTICIPANTES | 72 PARTIDOS</title>
+    <title>QUINIELA FAMILIAR SNISP | MUNDIAL 2026 | 31 PARTICIPANTES | CONTROL DE PAGOS</title>
     <style>
         * {
             margin: 0;
@@ -85,6 +85,12 @@
         
         .btn-excel { background: #1F7B4D; color: white; }
         .btn-excel:hover { background: #2a9d64; transform: translateY(-2px); }
+        
+        .btn-pago-pagado { background: #1e7e34; color: white; }
+        .btn-pago-pagado:hover { background: #28a745; }
+        
+        .btn-pago-pendiente { background: #dc3545; color: white; }
+        .btn-pago-pendiente:hover { background: #c82333; }
         
         .two-columns {
             display: grid;
@@ -234,9 +240,25 @@
             font-size: 0.8rem;
         }
         
+        /* Estilos para pago en tabla general */
+        .general-ranking .pagado-row {
+            background-color: #d4edda !important;
+        }
+        
+        .general-ranking .pendiente-row {
+            background-color: #f8d7da !important;
+        }
+        
         .general-ranking .rank-1 { background: #fff3cf; }
         .general-ranking .rank-2 { background: #f5f5ea; }
         .general-ranking .rank-3 { background: #efe8d6; }
+        
+        .general-ranking .pagado-row.rank-1, 
+        .general-ranking .pendiente-row.rank-1 { background: #fff3cf !important; }
+        .general-ranking .pagado-row.rank-2, 
+        .general-ranking .pendiente-row.rank-2 { background: #f5f5ea !important; }
+        .general-ranking .pagado-row.rank-3, 
+        .general-ranking .pendiente-row.rank-3 { background: #efe8d6 !important; }
         
         .puntos-destacados {
             font-weight: 800;
@@ -258,7 +280,16 @@
             font-size: 0.75rem;
             border: 1px solid #e2ecd9;
             transition: all 0.2s;
-            background: #f8f9fa;
+        }
+        
+        .participant-item.pagado-status {
+            background: #d4edda;
+            border-left: 6px solid #28a745;
+        }
+        
+        .participant-item.pendiente-status {
+            background: #f8d7da;
+            border-left: 6px solid #dc3545;
         }
         
         .participant-status {
@@ -274,6 +305,8 @@
         
         .participant-status.completo { background: #28a745; color: white; }
         .participant-status.pendiente { background: #ffc107; color: #333; }
+        .participant-status.pagado-badge { background: #28a745; color: white; }
+        .participant-status.pendiente-badge { background: #dc3545; color: white; }
         
         .participant-item button {
             padding: 4px 12px;
@@ -287,10 +320,11 @@
         
         .viewPronBtn { background: #2b8c54; color: white; }
         .delPartBtn { background: #6c757d; color: white; }
+        .togglePagoBtn { min-width: 90px; }
         .participant-item button:hover { opacity: 0.85; transform: scale(0.97);}
         
         #participantsList {
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -299,6 +333,35 @@
         #newPlayerName {
             font-size: 0.7rem;
             padding: 7px 12px;
+        }
+        
+        .payment-summary {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .payment-count {
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 30px;
+        }
+        
+        .payment-count.pagado {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .payment-count.pendiente {
+            background: #f8d7da;
+            color: #721c24;
         }
         
         .modal {
@@ -447,6 +510,11 @@
             font-size: 0.7rem;
             font-weight: bold;
         }
+        
+        .pago-icono {
+            font-size: 1rem;
+            margin-right: 4px;
+        }
     </style>
 </head>
 <body>
@@ -454,7 +522,7 @@
     <div class="worldcup-header">
         <div class="title-section">
             <h1>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 🏆</h1>
-            <p>📋 72 PARTIDOS OFICIALES | 31 PARTICIPANTES | PUNTOS EN TIEMPO REAL</p>
+            <p>📋 72 PARTIDOS OFICIALES | 31 PARTICIPANTES | CONTROL DE PAGOS</p>
         </div>
         <div class="btn-group">
             <button id="printCedulasBtn" class="btn btn-primary">🖨️ CÉDULAS</button>
@@ -488,14 +556,18 @@
             <div class="card">
                 <div class="card-header">
                     <h2>🏅 TABLA GENERAL</h2>
-                    <span class="badge-72">POSICIONES ACTUALIZADAS</span>
+                    <span class="badge-72">💰 COLOR POR PAGO</span>
+                </div>
+                <div style="margin-bottom: 10px; font-size: 0.65rem; display: flex; gap: 15px; justify-content: center;">
+                    <span style="background: #d4edda; padding: 2px 8px; border-radius: 20px;">🟢 Pagado</span>
+                    <span style="background: #f8d7da; padding: 2px 8px; border-radius: 20px;">🔴 Pendiente</span>
                 </div>
                 <div class="stats-bar">
-                    <span>📊 Total participantes: <strong id="totalParticipantes">0</strong></span>
+                    <span>📊 Total: <strong id="totalParticipantes">0</strong></span>
                     <span>🏆 Líder: <strong id="leaderName">-</strong></span>
                 </div>
                 <table class="general-ranking" id="generalRankingTable">
-                    <thead><tr><th>POS</th><th>PARTICIPANTE</th><th>PUNTOS</th></tr></thead>
+                    <thead><tr><th>POS</th><th>PARTICIPANTE</th><th>PUNTOS</th><th>PAGO</th></tr></thead>
                     <tbody id="generalRankingBody"></tbody>
                 </table>
             </div>
@@ -509,6 +581,22 @@
                 <div id="participantsList"></div>
             </div>
 
+            <!-- MÓDULO DE CONTROL DE PAGOS -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>💰 CONTROL DE PAGOS</h2>
+                    <span class="badge-72">💰 ESTADO FINANCIERO</span>
+                </div>
+                <div class="payment-summary">
+                    <span class="payment-count pagado" id="pagadosCount">✅ Pagados: 0</span>
+                    <span class="payment-count pendiente" id="pendientesCount">❌ Pendientes: 0</span>
+                </div>
+                <div id="paymentsList" style="max-height: 250px; overflow-y: auto;"></div>
+                <div class="footer-note" style="margin-top: 10px; background: #fff3cd;">
+                    💡 Verde = Pagado | Rojo = Pendiente | Haz clic en el botón para cambiar el estado
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-header"><h2>🔗 IMPORTAR RESULTADOS CSV</h2></div>
                 <p style="font-size:0.65rem;">FORMATO: GOLES_LOCAL, GOLES_VISITANTE (72 FILAS)</p>
@@ -520,7 +608,7 @@
             </div>
         </div>
     </div>
-    <div class="footer-note">⚽ INGRESA LOS RESULTADOS REALES PARA CALCULAR LOS PUNTOS AUTOMÁTICAMENTE ⚽</div>
+    <div class="footer-note">⚽ INGRESA LOS RESULTADOS REALES PARA CALCULAR LOS PUNTOS AUTOMÁTICAMENTE | 💰 MARCA LOS PAGOS ⚽</div>
 </div>
 
 <div id="savingIndicator" class="saving-indicator">💾 ACTUALIZANDO...</div>
@@ -536,7 +624,7 @@
         <div class="reset-options">
             <div class="reset-option" data-reset="results">
                 <h4>📊 SOLO RESULTADOS REALES</h4>
-                <p>Reinicia únicamente los marcadores de los partidos. Mantiene participantes y pronósticos.</p>
+                <p>Reinicia únicamente los marcadores de los partidos. Mantiene participantes, pronósticos y pagos.</p>
             </div>
             <div class="reset-option" data-reset="participants">
                 <h4>👥 SOLO PARTICIPANTES</h4>
@@ -546,9 +634,13 @@
                 <h4>📅 CALENDARIO OFICIAL</h4>
                 <p>Restaura el calendario original (72 partidos).</p>
             </div>
+            <div class="reset-option" data-reset="payments">
+                <h4>💰 SOLO PAGOS</h4>
+                <p>Reinicia únicamente el estado de pagos de todos los participantes (todos quedarán como PENDIENTE).</p>
+            </div>
             <div class="reset-option" data-reset="all">
                 <h4>⚠️ TODO (REINICIO COMPLETO)</h4>
-                <p>Reinicia absolutamente todo: resultados, participantes, pronósticos y calendario.</p>
+                <p>Reinicia absolutamente todo: resultados, participantes, pronósticos, pagos y calendario.</p>
             </div>
         </div>
         <div class="modal-buttons">
@@ -560,7 +652,6 @@
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script>
-    // Banderas para los países
     const flagMap = {
         "MÉXICO":"🇲🇽","SUDÁFRICA":"🇿🇦","COREA DEL SUR":"🇰🇷","REPUBLICA CHECA":"🇨🇿","CANADÁ":"🇨🇦","BOSNIA Y HERZEGOVINA":"🇧🇦","QATAR":"🇶🇦","SUIZA":"🇨🇭",
         "ESTADOS UNIDOS":"🇺🇸","PARAGUAY":"🇵🇾","BRASIL":"🇧🇷","MARRUECOS":"🇲🇦","HAITÍ":"🇭🇹","ESCOCIA":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","AUSTRALIA":"🇦🇺","TURQUÍA":"🇹🇷",
@@ -573,7 +664,6 @@
     function getTeamWithFlag(name) { let upper = name.toUpperCase().trim(); let flag = flagMap[upper] || "🏁"; return `<span class="team-with-flag"><span class="flag-icon">${flag}</span> ${upper}</span>`; }
     function getTeamText(name) { return name.toUpperCase(); }
 
-    // Calendario oficial 72 partidos (verificado del Excel)
     const partidosDataOriginal = [
         { no:1, grupo:"A", local:"MÉXICO", visitante:"SUDÁFRICA", fechaHora:"2026-06-11 13:00:00" },
         { no:2, grupo:"A", local:"COREA DEL SUR", visitante:"REPUBLICA CHECA", fechaHora:"2026-06-11 20:00:00" },
@@ -649,8 +739,6 @@
         { no:72, grupo:"J", local:"JORDANIA", visitante:"ARGENTINA", fechaHora:"2026-06-27 20:00:00" }
     ];
 
-    // TODOS LOS PRONÓSTICOS DE LOS 31 PARTICIPANTES extraídos y verificados del Excel
-    // Orden: MARCOS, WILLY, VIOLE, ELSY, ANGELICA, NELLY, GINA, ALFREDO, LUIS, OMAR, OMAR 2, MIGUELON, ADAI, AARON, CHARLY, JEANETH, TERE, HAZIEL, JOSE LUIS RH, ING FERNANDO, LUIS FERNANDO, VASTER, JESSICA, ROSI, VICTOR, CHINO 1, GAMBO, ERIKA ANABEL, HABIBI, ANEL, ORLANDO
     const pronosticosPorParticipante = {
         "MARCOS": ["3-1","1-2","2-0","1-0","0-3","4-1","0-4","0-2","5-0","1-1","2-1","1-1","4-0","2-1","1-2","3-1","2-1","1-3","3-1","4-1","3-0","2-1","0-2","1-2","1-1","2-1","3-1","1-1","2-0","1-2","4-0","2-1","1-0","3-1","3-0","1-3","3-1","1-0","1-1","1-3","3-0","2-0","2-1","1-3","1-1","1-1","0-3","3-1","1-1","3-1","0-3","3-1","1-2","1-2","0-4","1-3","1-1","0-1","1-1","1-2","0-2","2-1","1-2","1-2","3-1","1-3","1-5","3-1","1-1","1-1","1-1","0-4"],
         "WILLY": ["3-0","2-1","2-0","1-3","0-3","3-1","0-2","2-1","4-0","3-1","0-2","2-0","3-0","1-1","0-3","1-1","2-0","0-3","3-0","2-0","3-0","2-1","2-1","0-3","2-1","2-2","2-0","2-1","2-1","1-2","4-0","0-3","2-2","3-0","2-0","0-2","3-0","2-0","3-0","0-2","3-0","3-0","2-0","0-0","4-0","2-1","1-3","2-0","1-1","1-0","0-3","3-0","1-2","0-2","0-0","1-2","1-2","1-3","0-2","2-0","2-3","1-0","1-0","2-3","2-0","1-2","0-2","2-1","2-3","0-0","1-1","0-3"],
@@ -685,7 +773,6 @@
         "ORLANDO": ["1-0","0-0","2-0","1-0","0-3","1-0","0-1","2-1","4-0","2-1","1-1","1-0","4-0","2-1","1-3","1-0","3-1","0-2","3-1","1-0","2-0","2-2","1-0","1-2","1-1","2-1","1-0","2-1","1-0","1-2","3-0","1-0","2-1","2-0","3-1","2-2","2-1","1-1","2-1","0-1","2-0","3-0","1-0","1-2","3-1","2-0","0-1","1-0","1-1","1-1","0-1","1-0","0-0","0-1","0-2","0-1","1-1","1-3","2-2","1-1","1-2","2-1","0-0","1-2","0-0","0-2","0-1","1-0","1-2","0-1","0-1","0-3"]
     };
 
-    // Lista completa de 31 participantes en el orden exacto del Excel
     const participantesBase = [
         "MARCOS", "WILLY", "VIOLE", "ELSY", "ANGELICA", "NELLY", "GINA", "ALFREDO", "LUIS", 
         "OMAR", "OMAR 2", "MIGUELON", "ADAI", "AARON", "CHARLY", "JEANETH", "TERE", "HAZIEL",
@@ -701,9 +788,7 @@
 
     function parseScore(scoreStr) {
         if (!scoreStr || scoreStr === "" || scoreStr === "___ : ___" || scoreStr === "___:___") return { local: null, visitante: null };
-        // Limpiar y convertir
         let clean = scoreStr.toString().trim();
-        // Reemplazar punto por guion (casos como "2.1")
         clean = clean.replace(".", "-");
         const parts = clean.split(/[-:]/);
         if (parts.length === 2) {
@@ -740,7 +825,7 @@
     }
     
     function store() { 
-        localStorage.setItem('QM2026_FINAL_V9_31_CORREGIDO', JSON.stringify({ partidos, participantes, nextId }));
+        localStorage.setItem('QM2026_FINAL_V10_PAGOS', JSON.stringify({ partidos, participantes, nextId }));
         showSavingIndicator();
         updateParticipantCounter();
     }
@@ -761,10 +846,12 @@
                 puntos += calcularPuntos(p.pronosticos[i], partidos[i].real);
             }
             p.puntos = puntos;
+            if (p.pagado === undefined) p.pagado = false;
         }
         store();
         renderGeneralRanking();
         renderParticipants();
+        renderPaymentsList();
     }
     
     function renderGeneralRanking() {
@@ -772,7 +859,7 @@
         const tbody = document.getElementById('generalRankingBody');
         tbody.innerHTML = '';
         if (sorted.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">❌ Sin participantes</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">❌ Sin participantes</td></tr>';
             return;
         }
         let i = 0;
@@ -785,10 +872,14 @@
                 const p = sorted[i + j];
                 let medal = posActual === 1 ? '🥇 ' : (posActual === 2 ? '🥈 ' : (posActual === 3 ? '🥉 ' : ''));
                 let rankClass = posActual === 1 ? 'rank-1' : (posActual === 2 ? 'rank-2' : (posActual === 3 ? 'rank-3' : ''));
-                tbody.innerHTML += `<tr class="${rankClass}">
+                let paymentClass = p.pagado ? 'pagado-row' : 'pendiente-row';
+                let pagoIcono = p.pagado ? '🟢' : '🔴';
+                let pagoTexto = p.pagado ? 'Pagado' : 'Pendiente';
+                tbody.innerHTML += `<tr class="${rankClass} ${paymentClass}">
                     <td style="text-align:center; font-weight:bold;">${posActual} ${medal}</td>
                     <td><strong>${p.nombre.toUpperCase()}</strong></td>
                     <td class="puntos-destacados">${p.puntos}</td>
+                    <td style="text-align:center;">${pagoIcono} ${pagoTexto}</td>
                 </tr>`;
             }
             i += countSamePoints;
@@ -800,15 +891,16 @@
         let cont = document.getElementById('participantsList');
         cont.innerHTML = '';
         participantes.forEach(p => {
+            if (p.pagado === undefined) p.pagado = false;
             let completos = p.pronosticos.filter(pr => pr.local !== null && pr.visitante !== null).length;
             let estado = completos === 72 ? 'completo' : 'pendiente';
             let estadoTexto = completos === 72 ? '✅ COMPLETO' : `⚠️ PENDIENTE (${completos}/72)`;
             let div = document.createElement('div');
-            div.className = 'participant-item';
+            div.className = `participant-item ${p.pagado ? 'pagado-status' : 'pendiente-status'}`;
             div.innerHTML = `<span><strong>${p.nombre.toUpperCase()}</strong> (${p.puntos} PTS)</span>
                 <div style="display:flex; gap: 5px; align-items: center;">
                     <span class="participant-status ${estado}">${estadoTexto}</span>
-                    <button class="viewPronBtn" data-id="${p.id}">📋 VER PRONÓSTICOS</button>
+                    <button class="viewPronBtn" data-id="${p.id}">📋 VER</button>
                     <button class="delPartBtn" data-id="${p.id}">🗑️</button>
                 </div>`;
             cont.appendChild(div);
@@ -822,6 +914,47 @@
             } 
         }));
         updateParticipantCounter();
+    }
+    
+    function renderPaymentsList() {
+        const container = document.getElementById('paymentsList');
+        if (!container) return;
+        container.innerHTML = '';
+        let pagados = 0;
+        participantes.forEach(p => {
+            if (p.pagado === undefined) p.pagado = false;
+            if (p.pagado) pagados++;
+            const div = document.createElement('div');
+            div.className = `participant-item ${p.pagado ? 'pagado-status' : 'pendiente-status'}`;
+            div.style.marginBottom = '8px';
+            div.innerHTML = `
+                <span><strong>${p.nombre.toUpperCase()}</strong> (${p.puntos} PTS)</span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="participant-status ${p.pagado ? 'pagado-badge' : 'pendiente-badge'}">
+                        ${p.pagado ? '✅ PAGADO' : '❌ PENDIENTE'}
+                    </span>
+                    <button class="togglePagoBtn ${p.pagado ? 'btn-pago-pagado' : 'btn-pago-pendiente'}" data-id="${p.id}">
+                        ${p.pagado ? '💰 MARCAR PENDIENTE' : '💸 MARCAR PAGADO'}
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        document.getElementById('pagadosCount').innerHTML = `✅ Pagados: ${pagados}`;
+        document.getElementById('pendientesCount').innerHTML = `❌ Pendientes: ${participantes.length - pagados}`;
+        document.querySelectorAll('.togglePagoBtn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = parseInt(btn.dataset.id);
+                const participante = participantes.find(p => p.id === id);
+                if (participante) {
+                    participante.pagado = !participante.pagado;
+                    store();
+                    renderPaymentsList();
+                    renderParticipants();
+                    renderGeneralRanking();
+                }
+            });
+        });
     }
     
     function renderMatchesTable(){
@@ -970,7 +1103,7 @@
         if(!name) return alert("Ingrese un nombre");
         if(participantes.some(p => p.nombre === name)) return alert("Ese nombre ya existe");
         let empty = partidos.map(()=>({local:null, visitante:null}));
-        participantes.push({id:nextId++, nombre:name, pronosticos:empty, puntos:0});
+        participantes.push({id:nextId++, nombre:name, pronosticos:empty, puntos:0, pagado:false});
         store();
         recalcAll();
         renderParticipants();
@@ -1047,7 +1180,7 @@
                 const realTxt = (m.real.local!==null && m.real.visitante!==null) ? `${m.real.local}:${m.real.visitante}` : "___:___";
                 const pts = calcularPuntos(pron, m.real);
                 const fecha = new Date(m.fechaHora).toLocaleDateString('es-ES');
-                html += `<tr><td>${m.no}</td><td>${m.grupo}</td><td>${getTeamText(m.local)}</td><td>${getTeamText(m.visitante)}</td><td>${fecha}</td><td>${pronTxt}</td><td>${realTxt}</td><td>${pts}</td></tr>`;
+                html += `<tr><td>${m.no}</td><td>${m.grupo}</td><td>${getTeamText(m.local)}</td><td>${getTeamText(m.visitante)}<td>${fecha}</td><td>${pronTxt}</td><td>${realTxt}</td><td>${pts}</td></tr>`;
             }
             html += `</tbody></table><div class="subheader">TOTAL PUNTOS: ${p.puntos} | PÁGINA 2 DE 2</div></div>`;
         }
@@ -1086,18 +1219,28 @@
         alert("✅ Calendario restaurado.");
     }
     
+    function resetPaymentsOnly() {
+        participantes.forEach(p => p.pagado = false);
+        store();
+        renderPaymentsList();
+        renderParticipants();
+        renderGeneralRanking();
+        alert("✅ Estados de pago reiniciados (todos pendientes).");
+    }
+    
     function resetEverything() { 
         partidos = partidosDataOriginal.map(p => ({ ...p, real: { local: null, visitante: null } }));
         participantes = [];
         nextId = 1;
         participantesBase.forEach(nombre => {
             let pronosticos;
-            if (pronosticosPorParticipante[nombre]) {
+            if (pronosticosPorParticipante[nombre] && pronosticosPorParticipante[nombre].length > 0) {
                 pronosticos = pronosticosPorParticipante[nombre].map(score => parseScore(score));
+                while (pronosticos.length < 72) pronosticos.push({ local: null, visitante: null });
             } else {
                 pronosticos = partidos.map(() => ({ local: null, visitante: null }));
             }
-            participantes.push({ id: nextId++, nombre: nombre, pronosticos: pronosticos, puntos: 0 });
+            participantes.push({ id: nextId++, nombre: nombre, pronosticos: pronosticos, puntos: 0, pagado: false });
         });
         store();
         recalcAll();
@@ -1117,10 +1260,33 @@
         if(selectedResetOption === 'results') resetResultsOnly(); 
         else if(selectedResetOption === 'participants') resetParticipantsOnly(); 
         else if(selectedResetOption === 'calendar') resetCalendarOnly(); 
+        else if(selectedResetOption === 'payments') resetPaymentsOnly(); 
         else if(selectedResetOption === 'all') resetEverything(); 
     }
     
     function init() {
+        const saved = localStorage.getItem('QM2026_FINAL_V10_PAGOS');
+        if(saved){
+            try{
+                const data = JSON.parse(saved);
+                if(data.partidos) partidos = data.partidos;
+                if(data.participantes) participantes = data.participantes;
+                if(data.nextId) nextId = data.nextId;
+                participantes.forEach(p => { 
+                    if(!p.pronosticos || p.pronosticos.length!==72) p.pronosticos = partidos.map(()=>({local:null,visitante:null}));
+                    if(p.pagado === undefined) p.pagado = false;
+                });
+            }catch(e){ setDefault(); }
+        } else { setDefault(); }
+        recalcAll();
+        renderMatchesTable();
+        renderParticipants();
+        renderGeneralRanking();
+        renderPaymentsList();
+        updateParticipantCounter();
+    }
+    
+    function setDefault(){
         partidos = partidosDataOriginal.map(p => ({ ...p, real: { local: null, visitante: null } }));
         participantes = [];
         nextId = 1;
@@ -1128,18 +1294,13 @@
             let pronosticos;
             if (pronosticosPorParticipante[nombre] && pronosticosPorParticipante[nombre].length > 0) {
                 pronosticos = pronosticosPorParticipante[nombre].map(score => parseScore(score));
-                // Asegurar que tenga exactamente 72 pronósticos
                 while (pronosticos.length < 72) pronosticos.push({ local: null, visitante: null });
             } else {
                 pronosticos = partidos.map(() => ({ local: null, visitante: null }));
             }
-            participantes.push({ id: nextId++, nombre: nombre, pronosticos: pronosticos, puntos: 0 });
+            participantes.push({ id: nextId++, nombre: nombre, pronosticos: pronosticos, puntos: 0, pagado: false });
         });
         store();
-        recalcAll();
-        renderMatchesTable();
-        renderParticipants();
-        renderGeneralRanking();
     }
     
     // Event Listeners
