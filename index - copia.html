@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>QUINIELA FAMILIAR SNISP | MUNDIAL 2026 | FASE ELIMINATORIA | 28 PARTICIPANTES | CONTROL DE PAGOS</title>
+    <title>QUINIELA FAMILIAR SNISP | MUNDIAL 2026 | FASE ELIMINATORIA | 31 PARTICIPANTES | CONTROL DE PAGOS</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: linear-gradient(145deg, #e2f0e0 0%, #c2dbc0 100%); font-family: 'Segoe UI', system-ui, monospace; padding: 16px 12px; min-height: 100vh; }
@@ -34,7 +34,7 @@
         .card { background: rgba(255,255,255,0.98); border-radius: 32px; padding: 1.2rem; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border: 1px solid rgba(80,130,70,0.25); }
         .card-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 3px solid #ffcd4a; padding-bottom: 10px; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
         .card-header h2 { font-size: 1.25rem; color: #144d2c; text-transform: uppercase; font-weight: 800; }
-        .badge-28 { background: #ffcd4a; color: #0f4a2a; padding: 4px 14px; border-radius: 40px; font-size: 0.7rem; font-weight: 800; }
+        .badge-32 { background: #ffcd4a; color: #0f4a2a; padding: 4px 14px; border-radius: 40px; font-size: 0.7rem; font-weight: 800; }
         .matches-scroll { max-height: 560px; overflow-y: auto; border-radius: 24px; }
         .matches-table { width: 100%; border-collapse: collapse; font-size: 0.68rem; }
         .matches-table th { position: sticky; top: 0; background: #1f5e3a; color: #fff1c1; padding: 10px 4px; font-weight: 800; border-bottom: 2px solid #ffcd4a; }
@@ -99,7 +99,7 @@
     <div class="worldcup-header">
         <div class="title-section">
             <h1>🏆 QUINIELA FAMILIAR SNISP - MUNDIAL 2026 🏆</h1>
-            <p>📋 FASE ELIMINATORIA - 28 PARTIDOS | CONTROL DE PAGOS</p>
+            <p>📋 FASE ELIMINATORIA - 32 PARTIDOS | 31 PARTICIPANTES | CONTROL DE PAGOS</p>
         </div>
         <div class="btn-group">
             <button id="printCedulasBtn" class="btn btn-primary">🖨️ CÉDULAS</button>
@@ -113,7 +113,7 @@
             <div class="card">
                 <div class="card-header">
                     <h2>📅 CALENDARIO OFICIAL</h2>
-                    <span class="badge-28">28 PARTIDOS · ELIMINATORIA</span>
+                    <span class="badge-32">32 PARTIDOS · ELIMINATORIA</span>
                 </div>
                 <div class="matches-scroll">
                     <table class="matches-table">
@@ -131,7 +131,7 @@
             <div class="card">
                 <div class="card-header">
                     <h2>🏅 TABLA GENERAL</h2>
-                    <span class="badge-28">💰 COLOR POR PAGO</span>
+                    <span class="badge-32">💰 COLOR POR PAGO</span>
                 </div>
                 <div style="margin-bottom: 10px; font-size: 0.65rem; display: flex; gap: 15px; justify-content: center;">
                     <span style="background: #d4edda; padding: 2px 8px; border-radius: 20px;">🟢 Pagado</span>
@@ -148,7 +148,7 @@
             </div>
 
             <div class="card">
-                <div class="card-header"><h2>👥 PARTICIPANTES</h2><span id="participantCounterBadge" class="badge-28">0</span></div>
+                <div class="card-header"><h2>👥 PARTICIPANTES</h2><span id="participantCounterBadge" class="badge-32">0</span></div>
                 <div style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
                     <input type="text" id="newPlayerName" placeholder="NOMBRE NUEVO PARTICIPANTE" style="flex:1; border-radius: 60px; border: 1px solid #1e6e3e; font-weight: bold; text-transform: uppercase; padding: 8px 12px;">
                     <button id="addPlayerBtn" class="btn btn-secondary">➕ AGREGAR</button>
@@ -159,7 +159,7 @@
             <div class="card">
                 <div class="card-header">
                     <h2>💰 CONTROL DE PAGOS</h2>
-                    <span class="badge-28">💰 ESTADO FINANCIERO</span>
+                    <span class="badge-32">💰 ESTADO FINANCIERO</span>
                 </div>
                 <div class="payment-summary">
                     <span class="payment-count pagado" id="pagadosCount">✅ Pagados: 0</span>
@@ -173,7 +173,7 @@
 
             <div class="card">
                 <div class="card-header"><h2>🔗 IMPORTAR RESULTADOS CSV</h2></div>
-                <p style="font-size:0.65rem;">FORMATO: GOLES_LOCAL, GOLES_VISITANTE (28 FILAS)</p>
+                <p style="font-size:0.65rem;">FORMATO: GOLES_LOCAL, GOLES_VISITANTE (32 FILAS)</p>
                 <div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
                     <input type="text" id="csvUrl" placeholder="URL DEL ARCHIVO CSV" style="flex:1; border-radius:60px; border:1px solid #2b8c54; padding: 8px 12px; font-size:0.7rem;">
                     <button id="importCsvBtn" class="btn btn-outline">📥 IMPORTAR</button>
@@ -211,61 +211,85 @@
     function getTeamWithFlag(name) { let upper = name.toUpperCase().trim(); let flag = flagMap[upper] || "🏁"; return `<span class="team-with-flag"><span class="flag-icon">${flag}</span> ${upper}</span>`; }
     function getTeamText(name) { return name.toUpperCase(); }
 
-    // Calendario oficial 28 partidos - Fase Eliminatoria (desde Costa de Marfil vs Noruega hasta Final)
+    // Calendario oficial 32 partidos - Fase Eliminatoria (desde dieciseisavos hasta final)
     const partidosDataOriginal = [
-        // Dieciseisavos (1-12) - Eliminados los primeros 4
-        { no:1, fase:"16avos", local:"COSTA DE MARFIL", visitante:"NORUEGA", fechaHora:"2026-06-30 11:00:00" },
-        { no:2, fase:"16avos", local:"FRANCIA", visitante:"SUECIA", fechaHora:"2026-06-30 15:00:00" },
-        { no:3, fase:"16avos", local:"MEXICO", visitante:"ECUADOR", fechaHora:"2026-06-30 19:00:00" },
-        { no:4, fase:"16avos", local:"INGLATERRA", visitante:"RD CONGO", fechaHora:"2026-07-01 10:00:00" },
-        { no:5, fase:"16avos", local:"BELGICA", visitante:"SENEGAL", fechaHora:"2026-07-01 14:00:00" },
-        { no:6, fase:"16avos", local:"ESTADOS UNIDOS", visitante:"BOSNIA Y HERZEGOVINA", fechaHora:"2026-07-01 14:00:00" },
-        { no:7, fase:"16avos", local:"ESPAÑA", visitante:"AUSTRIA", fechaHora:"2026-07-02 13:00:00" },
-        { no:8, fase:"16avos", local:"PORTUGAL", visitante:"CROACIA", fechaHora:"2026-07-02 17:00:00" },
-        { no:9, fase:"16avos", local:"SUIZA", visitante:"ARGELIA", fechaHora:"2026-07-02 21:00:00" },
-        { no:10, fase:"16avos", local:"AUSTRALIA", visitante:"EGIPTO", fechaHora:"2026-07-03 12:00:00" },
-        { no:11, fase:"16avos", local:"ARGENTINA", visitante:"CABO VERDE", fechaHora:"2026-07-03 16:00:00" },
-        { no:12, fase:"16avos", local:"COLOMBIA", visitante:"GHANA", fechaHora:"2026-07-03 19:30:00" },
-        // Octavos (13-20)
-        { no:13, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-04 11:00:00" },
-        { no:14, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-04 15:00:00" },
-        { no:15, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-05 14:00:00" },
-        { no:16, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-05 14:00:00" },
-        { no:17, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-06 13:00:00" },
-        { no:18, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-06 18:00:00" },
-        { no:19, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-07 10:00:00" },
-        { no:20, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-07 14:00:00" },
-        // Cuartos (21-24)
-        { no:21, fase:"Cuartos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-09 14:00:00" },
-        { no:22, fase:"Cuartos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-10 13:00:00" },
-        { no:23, fase:"Cuartos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-11 15:00:00" },
-        { no:24, fase:"Cuartos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-11 19:00:00" },
-        // Semifinales (25-26)
-        { no:25, fase:"Semifinal", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-14 13:00:00" },
-        { no:26, fase:"Semifinal", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-15 13:00:00" },
-        // Tercer lugar (27)
-        { no:27, fase:"3er Lugar", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-18 15:00:00" },
-        // Final (28)
-        { no:28, fase:"Final", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-19 13:00:00" }
+        // Dieciseisavos (1-16)
+        { no:1, fase:"16avos", local:"SUDAFRICA", visitante:"CANADA", fechaHora:"2026-06-28 13:00:00" },
+        { no:2, fase:"16avos", local:"BRASIL", visitante:"JAPON", fechaHora:"2026-06-29 11:00:00" },
+        { no:3, fase:"16avos", local:"ALEMANIA", visitante:"PARAGUAY", fechaHora:"2026-06-29 14:30:00" },
+        { no:4, fase:"16avos", local:"PAISES BAJOS", visitante:"MARRUECOS", fechaHora:"2026-06-29 19:00:00" },
+        { no:5, fase:"16avos", local:"COSTA DE MARFIL", visitante:"NORUEGA", fechaHora:"2026-06-30 11:00:00" },
+        { no:6, fase:"16avos", local:"FRANCIA", visitante:"SUECIA", fechaHora:"2026-06-30 15:00:00" },
+        { no:7, fase:"16avos", local:"MEXICO", visitante:"ECUADOR", fechaHora:"2026-06-30 19:00:00" },
+        { no:8, fase:"16avos", local:"INGLATERRA", visitante:"RD CONGO", fechaHora:"2026-07-01 10:00:00" },
+        { no:9, fase:"16avos", local:"BELGICA", visitante:"SENEGAL", fechaHora:"2026-07-01 14:00:00" },
+        { no:10, fase:"16avos", local:"ESTADOS UNIDOS", visitante:"BOSNIA Y HERZEGOVINA", fechaHora:"2026-07-01 14:00:00" },
+        { no:11, fase:"16avos", local:"ESPAÑA", visitante:"AUSTRIA", fechaHora:"2026-07-02 13:00:00" },
+        { no:12, fase:"16avos", local:"PORTUGAL", visitante:"CROACIA", fechaHora:"2026-07-02 17:00:00" },
+        { no:13, fase:"16avos", local:"SUIZA", visitante:"ARGELIA", fechaHora:"2026-07-02 21:00:00" },
+        { no:14, fase:"16avos", local:"AUSTRALIA", visitante:"EGIPTO", fechaHora:"2026-07-03 12:00:00" },
+        { no:15, fase:"16avos", local:"ARGENTINA", visitante:"CABO VERDE", fechaHora:"2026-07-03 16:00:00" },
+        { no:16, fase:"16avos", local:"COLOMBIA", visitante:"GHANA", fechaHora:"2026-07-03 19:30:00" },
+        // Octavos (17-24)
+        { no:17, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-04 11:00:00" },
+        { no:18, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-04 15:00:00" },
+        { no:19, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-05 14:00:00" },
+        { no:20, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-05 14:00:00" },
+        { no:21, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-06 13:00:00" },
+        { no:22, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-06 18:00:00" },
+        { no:23, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-07 10:00:00" },
+        { no:24, fase:"Octavos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-07 14:00:00" },
+        // Cuartos (25-28)
+        { no:25, fase:"Cuartos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-09 14:00:00" },
+        { no:26, fase:"Cuartos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-10 13:00:00" },
+        { no:27, fase:"Cuartos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-11 15:00:00" },
+        { no:28, fase:"Cuartos", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-11 19:00:00" },
+        // Semifinales (29-30)
+        { no:29, fase:"Semifinal", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-14 13:00:00" },
+        { no:30, fase:"Semifinal", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-15 13:00:00" },
+        // Tercer lugar (31)
+        { no:31, fase:"3er Lugar", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-18 15:00:00" },
+        // Final (32)
+        { no:32, fase:"Final", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-19 13:00:00" }
     ];
 
     // PRONÓSTICOS EN BLANCO - Todos los marcadores vacíos para que los captures manualmente
-    // Cada participante tiene 28 posiciones con "" (vacío)
+    // Cada participante tiene 32 posiciones con "" (vacío)
     const pronosticosBase = {
-        "MESSI": ["1-1","2-1","2-1","2-1","1-1","1-0","1-1","0-0","1-2","1-0","2-0","2-0","","","","","","","","","","","","","","","",""],
-        "OMAR": ["2-2","2-1","2-1","4-0","1-1","2-0","3-1","2-2","2-1","2-2","4-1","3-1","","","","","","","","","","","","","","","",""],
-        "ADAI": ["1-2","3-1","3-0","5-0","1-0","3-1","4-1","2-1","3-0","4-1","2-1","3-0","","","","","","","","","","","","","","","",""],
-        "HAZIEL": ["1-3","2-0","3-1","2-0","1-1","3-0","0-0","1-1","2-1","2-1","3-0","1-2","","","","","","","","","","","","","","","",""],
-        "JOSE LUIS REYES": ["1-2","3-1","1-0","2-0","2-1","2-1","2-0","2-1","1-0","2-1","3-0","2-0","","","","","","","","","","","","","","","",""],
-        "ROSI": ["0-1","2-0","1-0","1-1","2-0","2-0","2-0","2-0","1-1","0-0","1-0","1-1","","","","","","","","","","","","","","","",""],
-        "VICTOR": ["1-2","4-2","2-1","2-1","3-2","2-1","2-1","2-2","2-1","1-1","3-1","","","","","","","","","","","","","","","","",""],
-        "CHINO BENITEZ": ["1-3","2-0","2-1","2-0","2-0","3-0","2-0","2-1","1-0","0-1","3-0","1-1","","","","","","","","","","","","","","","",""],
-        "GAMBO": ["1-3","4-1","2-1","2-0","2-2","2-0","3-0","2-1","1-0","1-1","3-0","3-1","","","","","","","","","","","","","","","",""],
-        "ORLANDO": ["1-1","2-0","1-0","2-1","1-1","1-0","2-1","2-2","1-0","0-0","3-0","1-1","","","","","","","","","","","","","","","",""]
+        "MARCOS": ["","","","","1-1","2-1","2-1","2-1","1-1","1-0","1-1","0-0","1-2","1-0","2-0","2-0","","","","","","","","","","","","","","","",""],
+        "WILLY": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "VIOLE": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "ELSY": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "ANGELICA": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "NELLY": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "GINA": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "ALFREDO": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "LUIS": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "OMAR": ["","","","","2-2","2-1","2-1","4-0","1-1","2-0","3-1","2-2","2-1","2-2","4-1","3-1","","","","","","","","","","","","","","","",""],
+        "OMAR 2": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "MIGUELON": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "ADAI": ["","","","","1-2","3-1","3-0","5-0","1-0","3-1","4-1","2-1","3-0","4-1","2-1","3-0","","","","","","","","","","","","","","","",""],
+        "AARON": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "CHARLY": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "JEANETH": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "TERE": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "HAZIEL": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "JOSE LUIS RH": ["","","","","1-2","3-1","1-0","2-0","2-1","2-1","2-0","2-1","1-0","2-1","3-0","2-0","","","","","","","","","","","","","","","",""],
+        "ING FERNANDO": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "LUIS FERNANDO": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "VASTER": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "JESSICA": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "ROSI": ["","","","","0-1","2-0","1-0","1-1","2-0","2-0","2-0","2-0","1-1","0-0","1-0","1-1","","","","","","","","","","","","","","","",""],
+        "VICTOR": ["","","","","1-2","4-2","2-1","2-1","3-2","2-1","2-1","2-2","2-1","1-1","3-1","","","","","","","","","","","","","","","","",""],
+        "CHINO 1": ["","","","","1-3","2-0","2-1","2-0","2-0","3-0","2-0","2-1","1-0","0-1","3-0","1-1","","","","","","","","","","","","","","","",""],
+        "GAMBO": ["","","","","1-3","4-1","2-1","2-0","2-2","2-0","3-0","2-1","1-0","1-1","3-0","3-1","","","","","","","","","","","","","","","",""],
+        "ERIKA ANABEL": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "HABIBI": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "ANEL": ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],
+        "ORLANDO": ["","","","","1-1","2-0","1-0","2-1","1-1","1-0","2-1","2-2","1-0","0-0","3-0","","","","","","","","","","","","","","","","",""]
     };
 
-    // Lista de participantes actualizada - SOLO LOS QUE SE MANTIENEN
-    const participantesBase = ["MESSI","OMAR","ADAI","HAZIEL","JOSE LUIS REYES","ROSI","VICTOR","CHINO BENITEZ","GAMBO","ORLANDO"];
+    const participantesBase = ["MARCOS","WILLY","VIOLE","ELSY","ANGELICA","NELLY","GINA","ALFREDO","LUIS","OMAR","OMAR 2","MIGUELON","ADAI","AARON","CHARLY","JEANETH","TERE","HAZIEL","JOSE LUIS RH","ING FERNANDO","LUIS FERNANDO","VASTER","JESSICA","ROSI","VICTOR","CHINO 1","GAMBO","ERIKA ANABEL","HABIBI","ANEL","ORLANDO"];
 
     let partidos = [], participantes = [], nextId = 1, updateTimeout = null, selectedResetOption = null;
 
@@ -283,7 +307,7 @@
     function formatFecha(fh) { if(!fh) return ""; let d=new Date(fh); return d.toLocaleDateString('es-ES') + " " + d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); }
     function showSavingIndicator() { const ind = document.getElementById('savingIndicator'); ind.style.opacity = '1'; setTimeout(() => ind.style.opacity = '0', 500); }
     function updateParticipantCounter() { document.getElementById('participantCounterBadge').innerText = participantes.length; document.getElementById('totalParticipantes').innerText = participantes.length; if(participantes.length){ const sorted = [...participantes].sort((a,b)=>b.puntos - a.puntos); document.getElementById('leaderName').innerHTML = sorted[0].nombre.toUpperCase() + " (" + sorted[0].puntos + ")"; } else { document.getElementById('leaderName').innerHTML = "-"; } }
-    function store() { localStorage.setItem('QM2026_ELIMINATORIA_V4', JSON.stringify({ partidos, participantes, nextId })); showSavingIndicator(); updateParticipantCounter(); }
+    function store() { localStorage.setItem('QM2026_ELIMINATORIA_V3', JSON.stringify({ partidos, participantes, nextId })); showSavingIndicator(); updateParticipantCounter(); }
     function calcularPuntos(pron, real) { if(real.local===null || real.visitante===null) return 0; if(pron.local===null || pron.visitante===null) return 0; if(pron.local===real.local && pron.visitante===real.visitante) return 3; let ganadorReal = real.local>real.visitante?'L':(real.local<real.visitante?'V':'E'); let ganadorPron = pron.local>pron.visitante?'L':(pron.local<pron.visitante?'V':'E'); return ganadorReal===ganadorPron?1:0; }
     function recalcAll(){ for(let p of participantes){ let pts=0; for(let i=0;i<partidos.length;i++) pts+=calcularPuntos(p.pronosticos[i], partidos[i].real); p.puntos=pts; if(p.pagado===undefined) p.pagado=false; } store(); renderGeneralRanking(); renderParticipants(); renderPaymentsList(); }
     
@@ -308,7 +332,7 @@
             let completos = p.pronosticos.filter(pr => pr.local !== null && pr.visitante !== null).length;
             let div = document.createElement('div');
             div.className = `participant-item ${p.pagado ? 'pagado-status' : 'pendiente-status'}`;
-            div.innerHTML = `<span><strong>${p.nombre.toUpperCase()}</strong> (${p.puntos} PTS)</span><div style="display:flex; gap:5px;"><span class="participant-status ${completos===28?'completo':'pendiente'}">${completos===28?'✅ COMPLETO':`⚠️ PENDIENTE (${completos}/28)`}</span><button class="viewPronBtn" data-id="${p.id}">📋 VER</button><button class="delPartBtn" data-id="${p.id}">🗑️</button></div>`;
+            div.innerHTML = `<span><strong>${p.nombre.toUpperCase()}</strong> (${p.puntos} PTS)</span><div style="display:flex; gap:5px;"><span class="participant-status ${completos===32?'completo':'pendiente'}">${completos===32?'✅ COMPLETO':`⚠️ PENDIENTE (${completos}/32)`}</span><button class="viewPronBtn" data-id="${p.id}">📋 VER</button><button class="delPartBtn" data-id="${p.id}">🗑️</button></div>`;
             cont.appendChild(div);
         });
         document.querySelectorAll('.viewPronBtn').forEach(btn=>btn.addEventListener('click',()=>openPronModal(parseInt(btn.dataset.id))));
@@ -351,16 +375,16 @@
     async function importCSV(){ let url=document.getElementById('csvUrl').value.trim(); if(!url){ alert("Ingrese URL del CSV"); return; } try{ let resp=await fetch(url); if(!resp.ok) throw new Error(); let text=await resp.text(); let lines=text.split(/\r?\n/).filter(l=>l.trim()); let idx=0; for(let i=0;i<lines.length&&idx<partidos.length;i++){ let cols=lines[i].split(',').map(c=>c.trim()); if(cols.length>=2){ let gl=parseInt(cols[0]), gv=parseInt(cols[1]); if(!isNaN(gl)&&!isNaN(gv)){ partidos[idx].real={local:gl,visitante:gv}; idx++; } } } store(); recalcAll(); renderMatchesTable(); document.getElementById('csvMsg').innerHTML="✅ Resultados importados correctamente"; setTimeout(()=>document.getElementById('csvMsg').innerHTML="",3000); } catch(e){ alert("Error al importar"); } }
     function addPlayer(){ let name=document.getElementById('newPlayerName').value.trim().toUpperCase(); if(!name) return alert("Ingrese un nombre"); if(participantes.some(p=>p.nombre===name)) return alert("Ese nombre ya existe"); let empty=partidos.map(()=>({local:null,visitante:null})); participantes.push({id:nextId++, nombre:name, pronosticos:empty, puntos:0, pagado:false}); store(); recalcAll(); document.getElementById('newPlayerName').value=''; }
     function exportToExcel(){ if(participantes.length===0){ alert("No hay participantes"); return; } let excelData=[]; let headers=['N°','FASE','LOCAL','VISITANTE','FECHA','HORA','RESULTADO REAL']; for(let p of participantes) headers.push(`${p.nombre} - PRONÓSTICO`,`${p.nombre} - PTS`); excelData.push(headers); for(let i=0;i<partidos.length;i++){ const m=partidos[i]; const fecha=new Date(m.fechaHora); const fechaStr=fecha.toLocaleDateString('es-ES'); const horaStr=fecha.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); const resultadoReal=(m.real.local!==null&&m.real.visitante!==null)?`${m.real.local}:${m.real.visitante}`:'___:___'; let row=[m.no,m.fase,m.local,m.visitante,fechaStr,horaStr,resultadoReal]; for(let p of participantes){ const pron=p.pronosticos[i]||{local:null,visitante:null}; const pronStr=(pron.local!==null&&pron.visitante!==null)?`${pron.local}:${pron.visitante}`:'___:___'; const puntos=calcularPuntos(pron,m.real); row.push(pronStr,puntos); } excelData.push(row); } let totalRow=['','','','','','','TOTAL PUNTOS:']; for(let p of participantes) totalRow.push('',p.puntos); excelData.push(totalRow); const ws=XLSX.utils.aoa_to_sheet(excelData); ws['!cols']=[{wch:5},{wch:10},{wch:22},{wch:22},{wch:12},{wch:8},{wch:15}]; const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"QUINIELA_ELIMINATORIA"); XLSX.writeFile(wb,`QUINIELA_SNISP_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.xlsx`); }
-    function printCedulas(){ if(participantes.length===0){ alert("No hay participantes"); return; } let win=window.open('','_blank'); let html=`<!DOCTYPE html><html><head><title>QUINIELA SNISP - Mundial 2026</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',monospace;background:white;font-size:10px;}.page{page-break-after:always;padding:15px;}h2{color:#0e4727;font-size:14px;text-align:center;border-bottom:2px solid #ffcd4a;padding-bottom:4px;}.subheader{text-align:center;font-size:9px;margin-bottom:10px;}table{width:100%;border-collapse:collapse;font-size:8px;}th{background:#f5e6c4;border:1px solid #999;padding:4px;}td{border:1px solid #aaa;padding:4px;}</style></head><body>`; for(let p of participantes){ html+=`<div class="page"><h2>🏆 QUINIELA SNISP - ${p.nombre.toUpperCase()} 🏆</h2><div class="subheader">FASE ELIMINATORIA - PARTIDOS 1 AL 28</div><table><thead><tr><th>#</th><th>FASE</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA</th><th>PRONÓSTICO</th><th>REAL</th><th>PTS</th></tr></thead><tbody>`; for(let i=0;i<partidos.length;i++){ const m=partidos[i]; const pron=p.pronosticos[i]||{}; const pronTxt=(pron.local!==null&&pron.visitante!==null)?`${pron.local}:${pron.visitante}`:"___:___"; const realTxt=(m.real.local!==null&&m.real.visitante!==null)?`${m.real.local}:${m.real.visitante}`:"___:___"; const pts=calcularPuntos(pron,m.real); const fecha=new Date(m.fechaHora).toLocaleDateString('es-ES'); html+=`<tr><td>${m.no}</td><td>${m.fase}</td><td>${getTeamText(m.local)}</td><td>${getTeamText(m.visitante)}</td><td>${fecha}</td><td>${pronTxt}</td><td>${realTxt}</td><td>${pts}</td></tr>`; } html+=`</tbody></table><div class="subheader">TOTAL PUNTOS: ${p.puntos}</div></div>`; } html+=`</body></html>`; win.document.write(html); win.document.close(); win.print(); }
+    function printCedulas(){ if(participantes.length===0){ alert("No hay participantes"); return; } let win=window.open('','_blank'); let html=`<!DOCTYPE html><html><head><title>QUINIELA SNISP - Mundial 2026</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',monospace;background:white;font-size:10px;}.page{page-break-after:always;padding:15px;}h2{color:#0e4727;font-size:14px;text-align:center;border-bottom:2px solid #ffcd4a;padding-bottom:4px;}.subheader{text-align:center;font-size:9px;margin-bottom:10px;}table{width:100%;border-collapse:collapse;font-size:8px;}th{background:#f5e6c4;border:1px solid #999;padding:4px;}td{border:1px solid #aaa;padding:4px;}</style></head><body>`; for(let p of participantes){ html+=`<div class="page"><h2>🏆 QUINIELA SNISP - ${p.nombre.toUpperCase()} 🏆</h2><div class="subheader">FASE ELIMINATORIA - PARTIDOS 1 AL 32</div><table><thead><tr><th>#</th><th>FASE</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA</th><th>PRONÓSTICO</th><th>REAL</th><th>PTS</th></tr></thead><tbody>`; for(let i=0;i<partidos.length;i++){ const m=partidos[i]; const pron=p.pronosticos[i]||{}; const pronTxt=(pron.local!==null&&pron.visitante!==null)?`${pron.local}:${pron.visitante}`:"___:___"; const realTxt=(m.real.local!==null&&m.real.visitante!==null)?`${m.real.local}:${m.real.visitante}`:"___:___"; const pts=calcularPuntos(pron,m.real); const fecha=new Date(m.fechaHora).toLocaleDateString('es-ES'); html+=`<tr><td>${m.no}</td><td>${m.fase}</td><td>${getTeamText(m.local)}</td><td>${getTeamText(m.visitante)}</td><td>${fecha}</td><td>${pronTxt}</td><td>${realTxt}</td><td>${pts}</td></tr>`; } html+=`</tbody></table><div class="subheader">TOTAL PUNTOS: ${p.puntos}</div></div>`; } html+=`</body></html>`; win.document.write(html); win.document.close(); win.print(); }
     function resetResultsOnly(){ partidos.forEach(p=>p.real={local:null,visitante:null}); recalcAll(); renderMatchesTable(); alert("✅ Resultados reales reiniciados."); }
     function resetParticipantsOnly(){ participantes=[]; nextId=1; store(); recalcAll(); alert("✅ Participantes eliminados."); }
     function resetCalendarOnly(){ partidos=partidosDataOriginal.map(p=>({...p,real:{local:null,visitante:null}})); participantes.forEach(p=>{ p.pronosticos=partidos.map(()=>({local:null,visitante:null})); }); recalcAll(); renderMatchesTable(); alert("✅ Calendario restaurado."); }
     function resetPaymentsOnly(){ participantes.forEach(p=>p.pagado=false); store(); renderPaymentsList(); renderParticipants(); renderGeneralRanking(); alert("✅ Estados de pago reiniciados (todos pendientes)."); }
-    function resetEverything(){ partidos=partidosDataOriginal.map(p=>({...p,real:{local:null,visitante:null}})); participantes=[]; nextId=1; participantesBase.forEach(nombre=>{ let pronosticos; if(pronosticosBase[nombre]&&pronosticosBase[nombre].length>0){ pronosticos=pronosticosBase[nombre].map(score=>parseScore(score)); while(pronosticos.length<28) pronosticos.push({local:null,visitante:null}); }else{ pronosticos=partidos.map(()=>({local:null,visitante:null})); } participantes.push({id:nextId++, nombre:nombre, pronosticos:pronosticos, puntos:0, pagado:false}); }); store(); recalcAll(); renderMatchesTable(); alert("✅ Reinicio completo."); }
+    function resetEverything(){ partidos=partidosDataOriginal.map(p=>({...p,real:{local:null,visitante:null}})); participantes=[]; nextId=1; participantesBase.forEach(nombre=>{ let pronosticos; if(pronosticosBase[nombre]&&pronosticosBase[nombre].length>0){ pronosticos=pronosticosBase[nombre].map(score=>parseScore(score)); while(pronosticos.length<32) pronosticos.push({local:null,visitante:null}); }else{ pronosticos=partidos.map(()=>({local:null,visitante:null})); } participantes.push({id:nextId++, nombre:nombre, pronosticos:pronosticos, puntos:0, pagado:false}); }); store(); recalcAll(); renderMatchesTable(); alert("✅ Reinicio completo."); }
     function openResetModal(){ selectedResetOption=null; document.querySelectorAll('.reset-option').forEach(opt=>opt.classList.remove('selected')); document.getElementById('resetModal').style.display='flex'; }
     function confirmReset(){ if(!selectedResetOption){ alert("Selecciona una opción"); return; } document.getElementById('resetModal').style.display='none'; if(selectedResetOption==='results') resetResultsOnly(); else if(selectedResetOption==='participants') resetParticipantsOnly(); else if(selectedResetOption==='calendar') resetCalendarOnly(); else if(selectedResetOption==='payments') resetPaymentsOnly(); else if(selectedResetOption==='all') resetEverything(); }
-    function init(){ const saved=localStorage.getItem('QM2026_ELIMINATORIA_V4'); if(saved){ try{ const data=JSON.parse(saved); if(data.partidos) partidos=data.partidos; if(data.participantes) participantes=data.participantes; if(data.nextId) nextId=data.nextId; participantes.forEach(p=>{ if(!p.pronosticos||p.pronosticos.length!==28) p.pronosticos=partidos.map(()=>({local:null,visitante:null})); if(p.pagado===undefined) p.pagado=false; }); }catch(e){ setDefault(); } } else { setDefault(); } recalcAll(); renderMatchesTable(); renderParticipants(); renderGeneralRanking(); renderPaymentsList(); updateParticipantCounter(); }
-    function setDefault(){ partidos=partidosDataOriginal.map(p=>({...p,real:{local:null,visitante:null}})); participantes=[]; nextId=1; participantesBase.forEach(nombre=>{ let pronosticos; if(pronosticosBase[nombre]&&pronosticosBase[nombre].length>0){ pronosticos=pronosticosBase[nombre].map(score=>parseScore(score)); while(pronosticos.length<28) pronosticos.push({local:null,visitante:null}); }else{ pronosticos=partidos.map(()=>({local:null,visitante:null})); } participantes.push({id:nextId++, nombre:nombre, pronosticos:pronosticos, puntos:0, pagado:false}); }); store(); }
+    function init(){ const saved=localStorage.getItem('QM2026_ELIMINATORIA_V3'); if(saved){ try{ const data=JSON.parse(saved); if(data.partidos) partidos=data.partidos; if(data.participantes) participantes=data.participantes; if(data.nextId) nextId=data.nextId; participantes.forEach(p=>{ if(!p.pronosticos||p.pronosticos.length!==32) p.pronosticos=partidos.map(()=>({local:null,visitante:null})); if(p.pagado===undefined) p.pagado=false; }); }catch(e){ setDefault(); } } else { setDefault(); } recalcAll(); renderMatchesTable(); renderParticipants(); renderGeneralRanking(); renderPaymentsList(); updateParticipantCounter(); }
+    function setDefault(){ partidos=partidosDataOriginal.map(p=>({...p,real:{local:null,visitante:null}})); participantes=[]; nextId=1; participantesBase.forEach(nombre=>{ let pronosticos; if(pronosticosBase[nombre]&&pronosticosBase[nombre].length>0){ pronosticos=pronosticosBase[nombre].map(score=>parseScore(score)); while(pronosticos.length<32) pronosticos.push({local:null,visitante:null}); }else{ pronosticos=partidos.map(()=>({local:null,visitante:null})); } participantes.push({id:nextId++, nombre:nombre, pronosticos:pronosticos, puntos:0, pagado:false}); }); store(); }
     document.getElementById('editMatchesBtn')?.addEventListener('click',openEditModal); document.getElementById('applyEditBtn')?.addEventListener('click',applyEdits); document.getElementById('closeEditModal')?.addEventListener('click',()=>document.getElementById('editModal').style.display='none'); document.getElementById('addPlayerBtn')?.addEventListener('click',addPlayer); document.getElementById('importCsvBtn')?.addEventListener('click',importCSV); document.getElementById('printCedulasBtn')?.addEventListener('click',printCedulas); document.getElementById('exportExcelBtn')?.addEventListener('click',exportToExcel); document.getElementById('resetOptionsBtn')?.addEventListener('click',openResetModal); document.getElementById('cancelResetBtn')?.addEventListener('click',()=>document.getElementById('resetModal').style.display='none'); document.getElementById('confirmResetBtn')?.addEventListener('click',confirmReset); document.getElementById('closePronosModal')?.addEventListener('click',()=>document.getElementById('pronosModal').style.display='none'); document.getElementById('cancelPronosBtn')?.addEventListener('click',()=>document.getElementById('pronosModal').style.display='none'); document.querySelectorAll('.reset-option').forEach(opt=>{ opt.addEventListener('click',()=>{ document.querySelectorAll('.reset-option').forEach(o=>o.classList.remove('selected')); opt.classList.add('selected'); selectedResetOption=opt.dataset.reset; }); }); window.onclick=(e)=>{ if(e.target===document.getElementById('pronosModal')) document.getElementById('pronosModal').style.display='none'; if(e.target===document.getElementById('editModal')) document.getElementById('editModal').style.display='none'; if(e.target===document.getElementById('resetModal')) document.getElementById('resetModal').style.display='none'; }; init();
 </script>
 </body>
