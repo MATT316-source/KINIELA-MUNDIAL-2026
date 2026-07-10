@@ -86,12 +86,16 @@
         .reset-option h4 { color: #1e6e3e; margin-bottom: 8px; font-size: 1rem; }
         .reset-option p { font-size: 0.7rem; color: #666; margin-bottom: 8px; }
         .modal-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
-        .pronostico-compacto { background: #fbfbf2; margin: 5px 0; padding: 6px 10px; border-radius: 40px; font-size: 0.65rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; border-left: 4px solid #ffcd4a; }
-        .pronostico-compacto input { width: 45px; background: white; border: 1px solid #c0cfb0; border-radius: 30px; text-align: center; font-weight: bold; padding: 4px 0; font-size: 0.7rem; }
+        .pronostico-item { background: #fbfbf2; margin: 4px 0; padding: 6px 10px; border-radius: 40px; font-size: 0.7rem; display: flex; align-items: center; gap: 8px; border-left: 4px solid #ffcd4a; }
+        .pronostico-item .partido-num { font-weight: 800; color: #0e4727; min-width: 35px; font-size: 0.75rem; }
+        .pronostico-item .equipos { flex: 1; font-size: 0.65rem; }
+        .pronostico-item input { width: 40px; background: white; border: 1px solid #c0cfb0; border-radius: 30px; text-align: center; font-weight: bold; padding: 3px 0; font-size: 0.7rem; }
         .edit-match-row { background: #fffae9; margin: 6px 0; padding: 8px 12px; border-radius: 50px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
         .footer-note { text-align: center; margin-top: 24px; background: #dbedcf; border-radius: 40px; padding: 8px; font-size: 0.6rem; font-weight: bold; text-transform: uppercase; }
         .saving-indicator { position: fixed; bottom: 20px; right: 20px; background: #1e6e3e; color: white; padding: 8px 16px; border-radius: 40px; font-size: 0.7rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000; }
         .stats-bar { background: #e8f0e4; border-radius: 30px; padding: 6px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: bold; }
+        .pronostico-text { font-family: 'Courier New', monospace; font-weight: 600; color: #1e6e3e; }
+        .code-block { background: #f5f5f5; padding: 10px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.7rem; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
     </style>
 </head>
 <body>
@@ -205,8 +209,7 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script>
     const flagMap = { "MÉXICO":"🇲🇽","SUDÁFRICA":"🇿🇦","COREA DEL SUR":"🇰🇷","REPUBLICA CHECA":"🇨🇿","CANADÁ":"🇨🇦","BOSNIA Y HERZEGOVINA":"🇧🇦","QATAR":"🇶🇦","SUIZA":"🇨🇭","ESTADOS UNIDOS":"🇺🇸","PARAGUAY":"🇵🇾","BRASIL":"🇧🇷","MARRUECOS":"🇲🇦","HAITÍ":"🇭🇹","ESCOCIA":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","AUSTRALIA":"🇦🇺","TURQUÍA":"🇹🇷","ALEMANIA":"🇩🇪","CURAZAO":"🇨🇼","PAÍSES BAJOS":"🇳🇱","JAPÓN":"🇯🇵","COSTA DE MARFIL":"🇨🇮","ECUADOR":"🇪🇨","SUECIA":"🇸🇪","TÚNEZ":"🇹🇳","ESPAÑA":"🇪🇸","CABO VERDE":"🇨🇻","BÉLGICA":"🇧🇪","EGIPTO":"🇪🇬","ARABIA SAUDÍ":"🇸🇦","URUGUAY":"🇺🇾","IRÁN":"🇮🇷","NUEVA ZELANDA":"🇳🇿","FRANCIA":"🇫🇷","SENEGAL":"🇸🇳","IRAK":"🇮🇶","NORUEGA":"🇳🇴","ARGENTINA":"🇦🇷","ARGELIA":"🇩🇿","AUSTRIA":"🇦🇹","JORDANIA":"🇯🇴","PORTUGAL":"🇵🇹","RD CONGO":"🇨🇩","INGLATERRA":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","CROACIA":"🇭🇷","GHANA":"🇬🇭","PANAMÁ":"🇵🇦","UZBEKISTÁN":"🇺🇿","COLOMBIA":"🇨🇴" };
     function getTeamWithFlag(name) { let upper = name.toUpperCase().trim(); let flag = flagMap[upper] || "🏁"; return `<span class="team-with-flag"><span class="flag-icon">${flag}</span> ${upper}</span>`; }
@@ -236,37 +239,98 @@
         { no:21, fase:"Cuartos", local:"FRANCIA", visitante:"MARRUECOS", fechaHora:"2026-07-09 14:00:00" },
         { no:22, fase:"Cuartos", local:"ESPAÑA", visitante:"BELGICA", fechaHora:"2026-07-10 13:00:00" },
         { no:23, fase:"Cuartos", local:"NORUEGA", visitante:"INGLATERRA", fechaHora:"2026-07-11 15:00:00" },
-        { no:24, fase:"Cuartos", local:"ARGENTINA", visitante:"COLOMBIA", fechaHora:"2026-07-11 19:00:00" },
-        { no:25, fase:"Semifinal", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-14 13:00:00" },
+        { no:24, fase:"Cuartos", local:"ARGENTINA", visitante:"SUIZA", fechaHora:"2026-07-11 19:00:00" },
+        { no:25, fase:"Semifinal", local:"FRANCIA", visitante:"POR DEFINIR", fechaHora:"2026-07-14 13:00:00" },
         { no:26, fase:"Semifinal", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-15 13:00:00" },
         { no:27, fase:"3er Lugar", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-18 15:00:00" },
         { no:28, fase:"Final", local:"POR DEFINIR", visitante:"POR DEFINIR", fechaHora:"2026-07-19 13:00:00" }
     ];
 
+    // PRONÓSTICOS EN FORMATO CON NÚMERO DE PARTIDO: "1// 1-1", "2// 2-1", etc.
+    // Esto es EXACTAMENTE lo que pediste - cada entrada incluye el número del partido
     const pronosticosBase = {
-        "MESSI": ["1-1","2-1","2-1","2-1","1-1","1-0","1-1","0-0","1-2","1-0","2-0","2-0","1-3","0-2","1-1","1-0","2-1","1-1","1-0","1-2","1-2","","","","","","",""],
-        "OMAR": ["2-2","2-1","2-1","4-0","1-1","2-0","3-1","2-2","2-1","2-2","4-1","3-1","1-3","0-3","2-2","2-1","2-3","1-2","","","","","","","","","",""],
-        "ADAI": ["1-2","3-1","3-0","5-0","1-0","3-1","4-1","2-1","3-0","4-1","2-1","3-0","3-1","3-2","2-0","2-1","3-1","2-1","","","","","","","","","",""],
-        "HAZIEL": ["1-3","2-0","3-1","2-0","1-1","3-0","0-0","1-1","2-1","2-1","3-0","1-2","1-2","3-0","2-2","2-1","1-1","1-2","2-1","1-1","","","","","","","",""],
-        "JOSE LUIS REYES": ["1-2","3-1","1-0","2-0","2-1","2-1","2-0","2-1","1-0","2-1","3-0","2-0","1-2","0-2","3-1","2-2","","2-2","","","","","","","","","",""],
-        "ROSI": ["0-1","2-0","1-0","1-1","2-0","2-0","2-0","2-0","1-1","0-0","1-0","1-1","0-2","1-1","1-0","2-1","0-2","1-0","","","","","","","","","",""],
-        "VICTOR": ["1-2","4-2","2-1","2-1","3-2","2-1","2-1","2-2","2-1","1-1","3-1","2-2","1-3","2-3","2-2","2-2","2-3","1-2","","","","","","","","","",""],
-        "CHINO BENITEZ": ["1-3","2-0","2-1","2-0","2-0","3-0","2-0","2-1","1-0","0-1","3-0","1-1","2-2","1-3","","","","","","","","","","","","","",""],
-        "GAMBO": ["1-3","4-1","2-1","2-0","2-2","2-0","3-0","2-1","1-0","1-1","3-0","3-1","1-2","1-3","3-2","2-1","2-2","3-2","","","","","","","","","",""],
-        "ORLANDO": ["1-1","2-0","1-0","2-1","1-1","1-0","2-1","2-2","1-0","0-0","3-0","1-1","1-2","1-3","2-2","1-0","0-0","0-1","1-0","1-2","","","","","","","",""]
+        "MESSI": [
+            "1// 1-1", "2// 2-1", "3// 2-1", "4// 2-1", "5// 1-1", "6// 1-0", "7// 1-1", "8// 0-0",
+            "9// 1-2", "10// 1-0", "11// 2-0", "12// 2-0", "13// 1-3", "14// 0-2", "15// 1-1", "16// 1-0",
+            "17// 2-1", "18// 1-1", "19// 1-0", "20// 1-2", "21// 1-2", "22// 1-1", "23// 1-1", "24// 1-1",
+            "25// 1-1", "26// 1-1", "27// 1-1", "28// 1-1"
+        ],
+        "OMAR": [
+            "1// 2-2", "2// 2-1", "3// 2-1", "4// 4-0", "5// 1-1", "6// 2-0", "7// 3-1", "8// 2-2",
+            "9// 2-1", "10// 2-2", "11// 4-1", "12// 3-1", "13// 1-3", "14// 0-3", "15// 2-2", "16// 2-1",
+            "17// 2-3", "18// 1-2", "19// 2-1", "20// 1-3", "21// 2-2", "22// 3-2", "23// 2-1", "24// 2-2",
+            "25// ", "26// ", "27// ", "28// "
+        ],
+        "ADAI": [
+            "1// 1-2", "2// 3-1", "3// 3-0", "4// 5-0", "5// 1-0", "6// 3-1", "7// 4-1", "8// 2-1",
+            "9// 3-0", "10// 4-1", "11// 2-1", "12// 3-0", "13// 3-1", "14// 3-2", "15// 2-0", "16// 2-1",
+            "17// 3-1", "18// 2-1", "19// 2-1", "20// 1-1", "21// 2-1", "22// 2-3", "23// 2-2", "24// 2-2",
+            "25// ", "26// ", "27// ", "28// "
+        ],
+        "HAZIEL": [
+            "1// 1-3", "2// 2-0", "3// 3-1", "4// 2-0", "5// 1-1", "6// 3-0", "7// 0-0", "8// 1-1",
+            "9// 2-1", "10// 2-1", "11// 3-0", "12// 1-2", "13// 1-2", "14// 3-0", "15// 2-2", "16// 2-1",
+            "17// 1-1", "18// 1-2", "19// 2-1", "20// 1-1", "21// 2-1", "22// 1-1", "23// 2-0", "24// 2-2",
+            "25// ", "26// ", "27// ", "28// "
+        ],
+        "JOSE LUIS REYES": [
+            "1// 1-2", "2// 3-1", "3// 1-0", "4// 2-0", "5// 2-1", "6// 2-1", "7// 2-0", "8// 2-1",
+            "9// 1-0", "10// 2-1", "11// 3-0", "12// 2-0", "13// 1-2", "14// 0-2", "15// 3-1", "16// 2-2",
+            "17// 3-1", "18// 2-2", "19// 3-1", "20// 2-2", "21// 1-0", "22// 1-1", "23// 2-3", "24// 2-1",
+            "25// ", "26// ", "27// ", "28// "
+        ],
+        "ROSI": [
+            "1// 0-1", "2// 2-0", "3// 1-0", "4// 1-1", "5// 2-0", "6// 2-0", "7// 2-0", "8// 2-0",
+            "9// 1-1", "10// 0-0", "11// 1-0", "12// 1-1", "13// 0-2", "14// 1-1", "15// 1-0", "16// 2-1",
+            "17// 0-2", "18// 1-0", "19// 2-0", "20// 0-1", "21// 1-0", "22// 2-1", "23// 2-1", "24// 2-1",
+            "25// ", "26// ", "27// ", "28// "
+        ],
+        "VICTOR": [
+            "1// 1-2", "2// 4-2", "3// 2-1", "4// 2-1", "5// 3-2", "6// 2-1", "7// 2-1", "8// 2-2",
+            "9// 2-1", "10// 1-1", "11// 3-1", "12// 2-2", "13// 1-3", "14// 2-3", "15// 2-2", "16// 2-2",
+            "17// 2-3", "18// 1-2", "19// 2-0", "20// 3-2", "21// 2-2", "22// 3-2", "23// 2-1", "24// 2-3",
+            "25// ", "26// ", "27// ", "28// "
+        ],
+        "CHINO BENITEZ": [
+            "1// 1-3", "2// 2-0", "3// 2-1", "4// 2-0", "5// 2-0", "6// 3-0", "7// 2-0", "8// 2-1",
+            "9// 1-0", "10// 0-1", "11// 3-0", "12// 1-1", "13// 2-2", "14// 1-3", "15// 2-3", "16// 2-1",
+            "17// ", "18// 1-2", "19// 3-1", "20// 2-1", "21// 3-2", "22// 2-2", "23// 3-2", "24// 3-2",
+            "25// ", "26// ", "27// ", "28// "
+        ],
+        "GAMBO": [
+            "1// 1-3", "2// 4-1", "3// 2-1", "4// 2-0", "5// 2-2", "6// 2-0", "7// 3-0", "8// 2-1",
+            "9// 1-0", "10// 1-1", "11// 3-0", "12// 3-1", "13// 1-2", "14// 1-3", "15// 3-2", "16// 2-1",
+            "17// 2-2", "18// 3-2", "19// 3-1", "20// 0-1", "21// 3-1", "22// 2-1", "23// 3-2", "24// 3-2",
+            "25// ", "26// ", "27// ", "28// "
+        ],
+        "ORLANDO": [
+            "1// 1-1", "2// 2-0", "3// 1-0", "4// 2-1", "5// 1-1", "6// 1-0", "7// 2-1", "8// 2-2",
+            "9// 1-0", "10// 0-0", "11// 3-0", "12// 1-1", "13// 1-2", "14// 1-3", "15// 2-2", "16// 1-0",
+            "17// 0-0", "18// 0-1", "19// 1-0", "20// 1-2", "21// 1-0", "22// 1-1", "23// 0-0", "24// 1-0",
+            "25// ", "26// ", "27// ", "28// "
+        ]
     };
 
     const participantesBase = ["MESSI","OMAR","ADAI","HAZIEL","JOSE LUIS REYES","ROSI","VICTOR","CHINO BENITEZ","GAMBO","ORLANDO"];
 
     let partidos = [], participantes = [], nextId = 1, updateTimeout = null, selectedResetOption = null;
 
-    function parseScore(scoreStr) {
-        if (!scoreStr || scoreStr === "") return { local: null, visitante: null };
-        let clean = scoreStr.toString().trim().replace(".", "-");
-        const parts = clean.split(/[-:]/);
-        if (parts.length === 2) {
-            const local = parseInt(parts[0]), visitante = parseInt(parts[1]);
-            if (!isNaN(local) && !isNaN(visitante)) return { local, visitante };
+    // Función para extraer el marcador de un string con formato "1// 1-1" o "1// "
+    function parseScoreFromString(scoreStr) {
+        if (!scoreStr || scoreStr.trim() === "") return { local: null, visitante: null };
+        // Buscar el patrón "// " y tomar lo que sigue
+        const match = scoreStr.match(/\/\/\s*(.*)/);
+        if (match) {
+            const scorePart = match[1].trim();
+            if (scorePart === "") return { local: null, visitante: null };
+            const parts = scorePart.split(/[-:]/);
+            if (parts.length === 2) {
+                const local = parseInt(parts[0]);
+                const visitante = parseInt(parts[1]);
+                if (!isNaN(local) && !isNaN(visitante)) {
+                    return { local, visitante };
+                }
+            }
         }
         return { local: null, visitante: null };
     }
@@ -330,32 +394,71 @@
         for(let i=0;i<partidos.length;i++){ const l=document.querySelector(`.realL-${i}`), v=document.querySelector(`.realV-${i}`); if(l&&v){ l.addEventListener('input',()=>updateRealTimeResult(i)); v.addEventListener('input',()=>updateRealTimeResult(i)); } }
     }
     
-    function updateRealTimeResult(idx){ const l=document.querySelector(`.realL-${idx}`), v=document.querySelector(`.realV-${idx}`); if(l&&v){ let lv=l.value===''?null:parseInt(l.value), vv=v.value===''?null:parseInt(v.value); if(isNaN(lv)) lv=null; if(isNaN(vv)) vv=null; partidos[idx].real={local:lv,visitante:vv}; if(updateTimeout) clearTimeout(updateTimeout); updateTimeout=setTimeout(()=>{ recalcAll(); renderMatchesTable(); updateTimeout=null; },600); } }
+    function updateRealTimeResult(idx){ const l=document.querySelector(`.realL-${idx}`), v=document.querySelector(`.realV-${idx}`); if(l&&v){ let lv=l.value===''?null:parseInt(l.value), vv=v.value===''?null:parseInt(v.value); if(isNaN(lv)) lv=null; if(isNaN(vv)) vv=null; partidos[idx].real={local:lv,visitante:vv}; if(updateTimeout) clearTimeout(updateTimeout); updateTimeout=setTimeout(()=>{ recalcAll(); renderMatchesTable(); updateTimeout=null; },100); } }
     
     let currentPlayer=null;
-    function handlePronosticoChange(){ if(updateTimeout) clearTimeout(updateTimeout); updateTimeout=setTimeout(()=>{ if(currentPlayer){ let newPronos=[]; for(let i=0;i<partidos.length;i++){ let lv=document.querySelector(`.prL-${i}`)?.value, vv=document.querySelector(`.prV-${i}`)?.value; let L=lv===''?null:parseInt(lv), V=vv===''?null:parseInt(vv); if(isNaN(L)) L=null; if(isNaN(V)) V=null; newPronos.push({local:L,visitante:V}); } currentPlayer.pronosticos=newPronos; recalcAll(); } updateTimeout=null; },400); }
+    function handlePronosticoChange(){ if(updateTimeout) clearTimeout(updateTimeout); updateTimeout=setTimeout(()=>{ if(currentPlayer){ let newPronos=[]; for(let i=0;i<partidos.length;i++){ let lv=document.querySelector(`.prL-${i}`)?.value, vv=document.querySelector(`.prV-${i}`)?.value; let L=lv===''?null:parseInt(lv), V=vv===''?null:parseInt(vv); if(isNaN(L)) L=null; if(isNaN(V)) V=null; newPronos.push({local:L,visitante:V}); } currentPlayer.pronosticos=newPronos; recalcAll(); } updateTimeout=null; },200); }
     
-    function openPronModal(id){ let player=participantes.find(p=>p.id===id); if(!player) return; currentPlayer=player; document.getElementById('pronosModalTitle').innerHTML=`📝 ${player.nombre.toUpperCase()} - PRONÓSTICOS`; let container=document.getElementById('pronosList'); container.innerHTML=''; partidos.forEach((part,idx)=>{ let pron=player.pronosticos[idx]||{local:null,visitante:null}; let div=document.createElement('div'); div.className='pronostico-compacto'; div.innerHTML=`<div><strong>${part.no}</strong> [${part.fase}] ${getTeamWithFlag(part.local)} vs ${getTeamWithFlag(part.visitante)}<br><span style="font-size:0.6rem;">${formatFecha(part.fechaHora)}</span></div><div><input type="number" class="prL-${idx}" value="${pron.local!==null?pron.local:''}" style="width:45px;" placeholder="?"> : <input type="number" class="prV-${idx}" value="${pron.visitante!==null?pron.visitante:''}" style="width:45px;" placeholder="?"></div>`; container.appendChild(div); }); document.querySelectorAll('#pronosList input').forEach(input=>input.addEventListener('input',handlePronosticoChange)); document.getElementById('pronosModal').style.display='flex'; }
+    function openPronModal(id){
+        let player=participantes.find(p=>p.id===id); if(!player) return; currentPlayer=player;
+        document.getElementById('pronosModalTitle').innerHTML=`📝 ${player.nombre.toUpperCase()} - PRONÓSTICOS`;
+        let container=document.getElementById('pronosList'); container.innerHTML='';
+        partidos.forEach((part,idx)=>{
+            let pron=player.pronosticos[idx]||{local:null,visitante:null};
+            let div=document.createElement('div');
+            div.className='pronostico-item';
+            let pronStr = (pron.local !== null && pron.visitante !== null) ? `${pron.local}-${pron.visitante}` : "";
+            div.innerHTML = `
+                <span class="partido-num">${idx+1}//</span>
+                <span class="equipos">${getTeamWithFlag(part.local)} vs ${getTeamWithFlag(part.visitante)}</span>
+                <span style="font-size:0.6rem; color:#888;">${formatFecha(part.fechaHora)}</span>
+                <div style="display:flex; gap:4px; align-items:center;">
+                    <input type="number" class="prL-${idx}" value="${pron.local!==null?pron.local:''}" style="width:35px;" placeholder="?"> : 
+                    <input type="number" class="prV-${idx}" value="${pron.visitante!==null?pron.visitante:''}" style="width:35px;" placeholder="?">
+                    <span style="font-size:0.7rem; font-weight:bold; color:#0e4727; margin-left:4px;">"${pronStr}"</span>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        document.querySelectorAll('#pronosList input').forEach(input=>input.addEventListener('input',handlePronosticoChange));
+        document.getElementById('pronosModal').style.display='flex';
+    }
     
     function openEditModal(){ let cont=document.getElementById('editMatchesList'); cont.innerHTML=''; partidos.forEach((p,idx)=>{ let div=document.createElement('div'); div.className='edit-match-row'; div.innerHTML=`<span>#${p.no}</span><input type="text" class="editFase-${idx}" value="${p.fase}" style="width:80px;"><input type="text" class="editLocal-${idx}" value="${p.local}" style="width:120px;"><input type="text" class="editVisit-${idx}" value="${p.visitante}" style="width:120px;"><input type="text" class="editFecha-${idx}" value="${p.fechaHora}" style="width:150px;">`; cont.appendChild(div); }); document.getElementById('editModal').style.display='flex'; }
     function applyEdits(){ for(let i=0;i<partidos.length;i++){ let nf=document.querySelector(`.editFase-${i}`)?.value.trim(); let nl=document.querySelector(`.editLocal-${i}`)?.value.trim().toUpperCase(); let nv=document.querySelector(`.editVisit-${i}`)?.value.trim().toUpperCase(); let nd=document.querySelector(`.editFecha-${i}`)?.value.trim(); if(nl&&nv){ if(nf) partidos[i].fase=nf; partidos[i].local=nl; partidos[i].visitante=nv; if(nd) partidos[i].fechaHora=nd; } } store(); renderMatchesTable(); document.getElementById('editModal').style.display='none'; alert("✅ Calendario actualizado"); }
     async function importCSV(){ let url=document.getElementById('csvUrl').value.trim(); if(!url){ alert("Ingrese URL del CSV"); return; } try{ let resp=await fetch(url); if(!resp.ok) throw new Error(); let text=await resp.text(); let lines=text.split(/\r?\n/).filter(l=>l.trim()); let idx=0; for(let i=0;i<lines.length&&idx<partidos.length;i++){ let cols=lines[i].split(',').map(c=>c.trim()); if(cols.length>=2){ let gl=parseInt(cols[0]), gv=parseInt(cols[1]); if(!isNaN(gl)&&!isNaN(gv)){ partidos[idx].real={local:gl,visitante:gv}; idx++; } } } store(); recalcAll(); renderMatchesTable(); document.getElementById('csvMsg').innerHTML="✅ Resultados importados correctamente"; setTimeout(()=>document.getElementById('csvMsg').innerHTML="",3000); } catch(e){ alert("Error al importar"); } }
     function addPlayer(){ let name=document.getElementById('newPlayerName').value.trim().toUpperCase(); if(!name) return alert("Ingrese un nombre"); if(participantes.some(p=>p.nombre===name)) return alert("Ese nombre ya existe"); let empty=partidos.map(()=>({local:null,visitante:null})); participantes.push({id:nextId++, nombre:name, pronosticos:empty, puntos:0, pagado:false}); store(); recalcAll(); document.getElementById('newPlayerName').value=''; }
     function exportToExcel(){ if(participantes.length===0){ alert("No hay participantes"); return; } let excelData=[]; let headers=['N°','FASE','LOCAL','VISITANTE','FECHA','HORA','RESULTADO REAL']; for(let p of participantes) headers.push(`${p.nombre} - PRONÓSTICO`,`${p.nombre} - PTS`); excelData.push(headers); for(let i=0;i<partidos.length;i++){ const m=partidos[i]; const fecha=new Date(m.fechaHora); const fechaStr=fecha.toLocaleDateString('es-ES'); const horaStr=fecha.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}); const resultadoReal=(m.real.local!==null&&m.real.visitante!==null)?`${m.real.local}:${m.real.visitante}`:'___:___'; let row=[m.no,m.fase,m.local,m.visitante,fechaStr,horaStr,resultadoReal]; for(let p of participantes){ const pron=p.pronosticos[i]||{local:null,visitante:null}; const pronStr=(pron.local!==null&&pron.visitante!==null)?`${pron.local}:${pron.visitante}`:'___:___'; const puntos=calcularPuntos(pron,m.real); row.push(pronStr,puntos); } excelData.push(row); } let totalRow=['','','','','','','TOTAL PUNTOS:']; for(let p of participantes) totalRow.push('',p.puntos); excelData.push(totalRow); const ws=XLSX.utils.aoa_to_sheet(excelData); ws['!cols']=[{wch:5},{wch:10},{wch:22},{wch:22},{wch:12},{wch:8},{wch:15}]; const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"QUINIELA_ELIMINATORIA"); XLSX.writeFile(wb,`QUINIELA_SNISP_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.xlsx`); }
-    function printCedulas(){ if(participantes.length===0){ alert("No hay participantes"); return; } let win=window.open('','_blank'); let html=`<!DOCTYPE html><html><head><title>QUINIELA SNISP - Mundial 2026</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',monospace;background:white;font-size:10px;}.page{page-break-after:always;padding:15px;}h2{color:#0e4727;font-size:14px;text-align:center;border-bottom:2px solid #ffcd4a;padding-bottom:4px;}.subheader{text-align:center;font-size:9px;margin-bottom:10px;}table{width:100%;border-collapse:collapse;font-size:8px;}th{background:#f5e6c4;border:1px solid #999;padding:4px;}td{border:1px solid #aaa;padding:4px;}</style></head><body>`; for(let p of participantes){ html+=`<div class="page"><h2>🏆 QUINIELA SNISP - ${p.nombre.toUpperCase()} 🏆</h2><div class="subheader">FASE ELIMINATORIA - PARTIDOS 1 AL 28</div><table><thead><tr><th>#</th><th>FASE</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA</th><th>PRONÓSTICO</th><th>REAL</th><th>PTS</th></tr></thead><tbody>`; for(let i=0;i<partidos.length;i++){ const m=partidos[i]; const pron=p.pronosticos[i]||{}; const pronTxt=(pron.local!==null&&pron.visitante!==null)?`${pron.local}:${pron.visitante}`:"___:___"; const realTxt=(m.real.local!==null&&m.real.visitante!==null)?`${m.real.local}:${m.real.visitante}`:"___:___"; const pts=calcularPuntos(pron,m.real);
-                    const fecha = m.fechaHora ? new Date(m.fechaHora).toLocaleDateString('es-ES') : ''; 
-                    html+=`<tr><td>${m.no}</td><td>${m.fase}</td><td>${getTeamText(m.local)}</td><td>${getTeamText(m.visitante)}</td><td>${fecha}</td><td>${pronTxt}</td><td>${realTxt}</td><td>${pts}</td></tr>`; } html+=`</tbody></table><div class="subheader">TOTAL PUNTOS: ${p.puntos}</div></div>`; } html+=`</body></html>`; win.document.write(html); win.document.close(); win.print(); }
+    function printCedulas(){ if(participantes.length===0){ alert("No hay participantes"); return; } let win=window.open('','_blank'); let html=`<!DOCTYPE html><html><head><title>QUINIELA SNISP - Mundial 2026</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',monospace;background:white;font-size:10px;}.page{page-break-after:always;padding:15px;}h2{color:#0e4727;font-size:14px;text-align:center;border-bottom:2px solid #ffcd4a;padding-bottom:4px;}.subheader{text-align:center;font-size:9px;margin-bottom:10px;}table{width:100%;border-collapse:collapse;font-size:8px;}th{background:#f5e6c4;border:1px solid #999;padding:4px;}td{border:1px solid #aaa;padding:4px;}</style></head><body>`; for(let p of participantes){ html+=`<div class="page"><h2>🏆 QUINIELA SNISP - ${p.nombre.toUpperCase()} 🏆</h2><div class="subheader">FASE ELIMINATORIA - PARTIDOS 1 AL 28</div><table><thead><tr><th>#</th><th>FASE</th><th>LOCAL</th><th>VISITANTE</th><th>FECHA</th><th>PRONÓSTICO</th><th>REAL</th><th>PTS</th></tr></thead><tbody>`; for(let i=0;i<partidos.length;i++){ const m=partidos[i]; const pron=p.pronosticos[i]||{}; const pronTxt=(pron.local!==null&&pron.visitante!==null)?`${pron.local}:${pron.visitante}`:"___:___"; const realTxt=(m.real.local!==null&&m.real.visitante!==null)?`${m.real.local}:${m.real.visitante}`:"___:___"; const pts=calcularPuntos(pron,m.real); const fecha=new Date(m.fechaHora).toLocaleDateString('es-ES'); html+=`<tr><td>${m.no}</td><td>${m.fase}</td><td>${getTeamText(m.local)}</td><td>${getTeamText(m.visitante)}</td><td>${fecha}</td><td>${pronTxt}</td><td>${realTxt}</td><td>${pts}</td></tr>`; } html+=`</tbody></table><div class="subheader">TOTAL PUNTOS: ${p.puntos}</div></div>`; } html+=`</body></html>`; win.document.write(html); win.document.close(); win.print(); }
     function resetResultsOnly(){ partidos.forEach(p=>p.real={local:null,visitante:null}); recalcAll(); renderMatchesTable(); alert("✅ Resultados reales reiniciados."); }
     function resetParticipantsOnly(){ participantes=[]; nextId=1; store(); recalcAll(); alert("✅ Participantes eliminados."); }
     function resetCalendarOnly(){ partidos=partidosDataOriginal.map(p=>({...p,real:{local:null,visitante:null}})); participantes.forEach(p=>{ p.pronosticos=partidos.map(()=>({local:null,visitante:null})); }); recalcAll(); renderMatchesTable(); alert("✅ Calendario restaurado."); }
     function resetPaymentsOnly(){ participantes.forEach(p=>p.pagado=false); store(); renderPaymentsList(); renderParticipants(); renderGeneralRanking(); alert("✅ Estados de pago reiniciados (todos pendientes)."); }
-    function resetEverything(){ partidos=partidosDataOriginal.map(p=>({...p,real:{local:null,visitante:null}})); participantes=[]; nextId=1; participantesBase.forEach(nombre=>{ let pronosticos; if(pronosticosBase[nombre]&&pronosticosBase[nombre].length>0){ pronosticos=pronosticosBase[nombre].map(score=>parseScore(score)); while(pronosticos.length<28) pronosticos.push({local:null,visitante:null}); }else{ pronosticos=partidos.map(()=>({local:null,visitante:null})); } participantes.push({id:nextId++, nombre:nombre, pronosticos:pronosticos, puntos:0, pagado:false}); }); store(); recalcAll(); renderMatchesTable(); alert("✅ Reinicio completo."); }
+    function resetEverything(){ 
+        partidos=partidosDataOriginal.map(p=>({...p,real:{local:null,visitante:null}})); 
+        participantes=[]; 
+        nextId=1; 
+        participantesBase.forEach(nombre=>{ 
+            let pronosticos; 
+            if(pronosticosBase[nombre] && pronosticosBase[nombre].length > 0){ 
+                pronosticos = pronosticosBase[nombre].map(score => parseScoreFromString(score)); 
+                while(pronosticos.length < 28) pronosticos.push({local:null, visitante:null}); 
+            } else { 
+                pronosticos = partidos.map(()=>({local:null, visitante:null})); 
+            } 
+            participantes.push({id:nextId++, nombre:nombre, pronosticos:pronosticos, puntos:0, pagado:false}); 
+        }); 
+        store(); 
+        recalcAll(); 
+        renderMatchesTable(); 
+        alert("✅ Reinicio completo."); 
+    }
     function openResetModal(){ selectedResetOption=null; document.querySelectorAll('.reset-option').forEach(opt=>opt.classList.remove('selected')); document.getElementById('resetModal').style.display='flex'; }
     function confirmReset(){ if(!selectedResetOption){ alert("Selecciona una opción"); return; } document.getElementById('resetModal').style.display='none'; if(selectedResetOption==='results') resetResultsOnly(); else if(selectedResetOption==='participants') resetParticipantsOnly(); else if(selectedResetOption==='calendar') resetCalendarOnly(); else if(selectedResetOption==='payments') resetPaymentsOnly(); else if(selectedResetOption==='all') resetEverything(); }
     function init(){ 
         const saved=localStorage.getItem('QM2026_ELIMINATORIA_V4'); 
-        try {
-            if(saved){ 
+        if(saved){ 
+            try{ 
                 const data=JSON.parse(saved); 
                 if(data.partidos) partidos=data.partidos; 
                 if(data.participantes) participantes=data.participantes; 
@@ -363,17 +466,32 @@
                 participantes.forEach(p=>{ 
                     if(!p.pronosticos||p.pronosticos.length!==28) p.pronosticos=partidos.map(()=>({local:null,visitante:null})); 
                     if(p.pagado===undefined) p.pagado=false; 
-                });
-            } else { 
-                setDefault(); 
-            }
-        } catch(e) {
-            console.warn("Datos guardados corruptos. Cargando valores por defecto.");
-            setDefault();
-        }
-        recalcAll(); renderMatchesTable(); renderParticipants(); renderGeneralRanking(); renderPaymentsList(); updateParticipantCounter(); 
+                }); 
+            }catch(e){ setDefault(); } 
+        } else { setDefault(); } 
+        recalcAll(); 
+        renderMatchesTable(); 
+        renderParticipants(); 
+        renderGeneralRanking(); 
+        renderPaymentsList(); 
+        updateParticipantCounter(); 
     }
-    function setDefault(){ partidos=partidosDataOriginal.map(p=>({...p,real:{local:null,visitante:null}})); participantes=[]; nextId=1; participantesBase.forEach(nombre=>{ let pronosticos; if(pronosticosBase[nombre]&&pronosticosBase[nombre].length>0){ pronosticos=pronosticosBase[nombre].map(score=>parseScore(score)); while(pronosticos.length<28) pronosticos.push({local:null,visitante:null}); }else{ pronosticos=partidos.map(()=>({local:null,visitante:null})); } participantes.push({id:nextId++, nombre:nombre, pronosticos:pronosticos, puntos:0, pagado:false}); }); store(); }
+    function setDefault(){ 
+        partidos=partidosDataOriginal.map(p=>({...p,real:{local:null,visitante:null}})); 
+        participantes=[]; 
+        nextId=1; 
+        participantesBase.forEach(nombre=>{ 
+            let pronosticos; 
+            if(pronosticosBase[nombre] && pronosticosBase[nombre].length > 0){ 
+                pronosticos = pronosticosBase[nombre].map(score => parseScoreFromString(score)); 
+                while(pronosticos.length < 28) pronosticos.push({local:null, visitante:null}); 
+            } else { 
+                pronosticos = partidos.map(()=>({local:null, visitante:null})); 
+            } 
+            participantes.push({id:nextId++, nombre:nombre, pronosticos:pronosticos, puntos:0, pagado:false}); 
+        }); 
+        store(); 
+    }
     document.getElementById('editMatchesBtn')?.addEventListener('click',openEditModal); document.getElementById('applyEditBtn')?.addEventListener('click',applyEdits); document.getElementById('closeEditModal')?.addEventListener('click',()=>document.getElementById('editModal').style.display='none'); document.getElementById('addPlayerBtn')?.addEventListener('click',addPlayer); document.getElementById('importCsvBtn')?.addEventListener('click',importCSV); document.getElementById('printCedulasBtn')?.addEventListener('click',printCedulas); document.getElementById('exportExcelBtn')?.addEventListener('click',exportToExcel); document.getElementById('resetOptionsBtn')?.addEventListener('click',openResetModal); document.getElementById('cancelResetBtn')?.addEventListener('click',()=>document.getElementById('resetModal').style.display='none'); document.getElementById('confirmResetBtn')?.addEventListener('click',confirmReset); document.getElementById('closePronosModal')?.addEventListener('click',()=>document.getElementById('pronosModal').style.display='none'); document.getElementById('cancelPronosBtn')?.addEventListener('click',()=>document.getElementById('pronosModal').style.display='none'); document.querySelectorAll('.reset-option').forEach(opt=>{ opt.addEventListener('click',()=>{ document.querySelectorAll('.reset-option').forEach(o=>o.classList.remove('selected')); opt.classList.add('selected'); selectedResetOption=opt.dataset.reset; }); }); window.onclick=(e)=>{ if(e.target===document.getElementById('pronosModal')) document.getElementById('pronosModal').style.display='none'; if(e.target===document.getElementById('editModal')) document.getElementById('editModal').style.display='none'; if(e.target===document.getElementById('resetModal')) document.getElementById('resetModal').style.display='none'; }; init();
 </script>
 </body>
